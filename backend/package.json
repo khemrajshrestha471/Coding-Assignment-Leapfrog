@@ -1,0 +1,19 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "This is the backend server for Note Taking Application",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "backend",
+    "server",
+    "middleware"
+  ],
+  "author": "Khem Raj Shrestha",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.21.2"
+  }
+}
