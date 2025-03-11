@@ -1,10 +1,11 @@
-import { Button } from "@/components/ui/button";
+import Navbar from "@/components/Navbar";
+import LandingPage from "@/components/LandingPage"
 
 export default function Home() {
   return (
-    <h1 className="text-3xl font-bold underline text-red-500">
-      Hello world!
-      <Button>Click me</Button>
-    </h1>
+    <>
+    <Navbar />
+    <LandingPage />
+    </>
   )
 }
