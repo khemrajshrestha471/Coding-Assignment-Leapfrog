@@ -1,10 +1,7 @@
-import Image from "next/image";
-
 export default function Home() {
   return (
-    <div>
-      <h1>Starting of Note Taking Application</h1>
-    </div>
-      
-  );
+    <h1 className="text-3xl font-bold underline text-red-500">
+      Hello world!
+    </h1>
+  )
 }
