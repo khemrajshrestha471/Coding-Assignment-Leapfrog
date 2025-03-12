@@ -8,6 +8,7 @@ const page = () => {
   const [expiryTime, setExpiryTime] = useState(0);
   const [isUserId, setIsUserId] = useState("");
   const router = useRouter();
+  const [storeUsername, setStoreUsername] = useState("");
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -21,6 +22,7 @@ const page = () => {
           setExpiryTime(decodedToken.exp);
         }
         if (decodedToken && decodedToken.username && decodedToken.userId) {
+          setStoreUsername(decodedToken.username);
           // Redirect to the URL format with query params if not already there
           const queryParams = new URLSearchParams(window.location.search);
           const u_id = queryParams.get("Id") || "";
@@ -55,7 +57,19 @@ const page = () => {
     }
   }, [router, isUserId]);
 
-  return <div>page</div>;
+  return (
+    <div>
+      {storeUsername ? (
+        <>
+          <h1>Welcome back, {storeUsername}</h1>
+        </>
+      ) : (
+        <>
+          <p>Loading...</p>
+        </>
+      )}
+    </div>
+  );
 };
 
 export default page;
