@@ -4,10 +4,38 @@ import { Button } from "@/components/ui/button";
 import { Menu, NotebookPen } from "lucide-react";
 import Link from "next/link";
 import { useState, useEffect } from "react";
+import { decodeToken } from "@/components/utils/decodeToken";
+import { useRouter } from "next/navigation";
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSticky, setIsSticky] = useState(false);
+  const [expiryTime, setExpiryTime] = useState(0);
+  const [showGetStarted, setShowGetStarted] = useState(true);
+  const router = useRouter();
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+
+    if (token) {
+      try {
+        const decodedToken = decodeToken(token);
+        if (decodedToken && decodedToken.exp) {
+          setExpiryTime(decodedToken.exp);
+          setShowGetStarted(false);
+        }
+      } catch (error) {
+        console.error("Error decoding token:", error);
+      }
+    }
+    // Token expiry check
+    if (expiryTime > 0) {
+      const currentTime = Date.now() / 1000;
+      if (expiryTime < currentTime) {
+        localStorage.removeItem("token");
+      }
+    }
+  }, []);
 
   // Toggle mobile menu
   const toggleMenu = () => {
@@ -29,6 +57,12 @@ export default function Navbar() {
       window.removeEventListener("scroll", handleScroll);
     };
   }, []);
+
+  const LogOut = () => {
+    localStorage.removeItem("token");
+    setShowGetStarted(true);
+    router.push("/login");
+  }
 
   return (
     <nav
@@ -79,11 +113,21 @@ export default function Navbar() {
               Contact
             </Button>
           </Link>
-          <Link href="/login">
-            <Button className="bg-blue-600 hover:bg-blue-700 text-white">
-              Get Started
-            </Button>
-          </Link>
+          {showGetStarted ? (
+            <Link href="/login">
+              <Button className="bg-blue-600 hover:bg-blue-700 text-white cursor-pointer">
+                Get Started
+              </Button>
+            </Link>
+          ) : (
+            <>
+              {/* <Link href="/login"> */}
+                <Button className="bg-blue-600 hover:bg-blue-700 text-white cursor-pointer" onClick={LogOut}>
+                  Log Out
+                </Button>
+              {/* </Link> */}
+            </>
+          )}
         </div>
 
         {/* Mobile Menu Button */}
@@ -125,11 +169,19 @@ export default function Navbar() {
               Contact
             </Button>
           </Link>
-          <Link href="/login">
-            <Button className="w-full justify-start bg-blue-600 hover:bg-blue-700 text-white">
-              Get Started
-            </Button>
-          </Link>
+          {showGetStarted ? (
+            <Link href="/login">
+              <Button className="w-full justify-start bg-blue-600 hover:bg-blue-700 text-white cursor-pointer">
+                Get Started
+              </Button>
+            </Link>
+          ) : (
+            // <Link href="/login">
+              <Button className="w-full justify-start bg-blue-600 hover:bg-blue-700 text-white cursor-pointer" onClick={LogOut}>
+                Log Out
+              </Button>
+            // </Link>
+          )}
         </div>
       </div>
     </nav>

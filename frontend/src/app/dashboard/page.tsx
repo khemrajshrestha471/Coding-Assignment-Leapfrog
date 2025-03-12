@@ -1,6 +1,6 @@
 "use client";
 
-import { decodeToken } from "@/components/utils/decodeToken"
+import { decodeToken } from "@/components/utils/decodeToken";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
@@ -38,7 +38,7 @@ const page = () => {
               `/dashboard?username=${decodedToken.username}&Id=${decodedToken.userId}`
             );
           }
-        };
+        }
       } catch (error) {
         console.error("Error decoding token:", error);
         // In case of an invalid token, redirect to login
@@ -55,9 +55,7 @@ const page = () => {
     }
   }, [router, isUserId]);
 
-  return (
-    <div>page</div>
-  )
-}
+  return <div>page</div>;
+};
 
-export default page
+export default page;

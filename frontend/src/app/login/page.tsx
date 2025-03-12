@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation"; // For navigation
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { IoMdEye, IoMdEyeOff } from "react-icons/io";
 import {
   Card,
   CardHeader,
@@ -15,7 +16,7 @@ import {
   CardContent,
 } from "@/components/ui/card";
 import { decodeToken } from "@/components/utils/decodeToken";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 // Define the schema for form validation using Zod
 const loginSchema = z.object({
@@ -28,6 +29,7 @@ type LoginFormData = z.infer<typeof loginSchema>;
 
 export default function LoginPage() {
   const router = useRouter(); // To navigate to dashboard after successful login
+  const [showPassword, setShowPassword] = useState(false);
 
   const {
     register,
@@ -37,6 +39,10 @@ export default function LoginPage() {
   } = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
   });
+
+  const togglePasswordVisibility = () => {
+    setShowPassword((prevState: any) => !prevState);
+  };
 
   useEffect(() => {
     // Check if token exists in localStorage
@@ -115,15 +121,26 @@ export default function LoginPage() {
               )}
             </div>
 
-            {/* Password Field */}
             <div className="space-y-2">
               <Label htmlFor="password">Password</Label>
-              <Input
-                id="password"
-                type="password"
-                placeholder="Enter your password"
-                {...register("password")}
-              />
+              <div className="relative">
+                <Input
+                  id="password"
+                  type={showPassword ? "text" : "password"}
+                  placeholder="Enter your password"
+                  {...register("password")}
+                />
+                <div
+                  className="absolute inset-y-0 right-3 flex items-center cursor-pointer"
+                  onClick={togglePasswordVisibility}
+                >
+                  {showPassword ? (
+                    <IoMdEyeOff />
+                  ) : (
+                    <IoMdEye />
+                  )}
+                </div>
+              </div>
               {errors.password && (
                 <p className="text-sm text-red-500">
                   {errors.password.message}

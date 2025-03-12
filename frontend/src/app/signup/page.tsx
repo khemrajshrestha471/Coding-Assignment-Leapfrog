@@ -6,19 +6,33 @@ import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+} from "@/components/ui/card";
+import { IoMdEye, IoMdEyeOff } from "react-icons/io";
+import { useState } from "react";
 
 // Define the schema for form validation using Zod
 const signupSchema = z
   .object({
-    username: z.string()
+    username: z
+      .string()
       .min(2, { message: "Username must be at least 2 characters." })
       .max(15, { message: "Username must be at most 15 characters." })
       .regex(/^[a-zA-Z0-9]+$/, {
         message: "Username can only contain letters and numbers.",
       }),
-    email: z.string().email("Invalid email address").min(1, "Email is required"),
-    phone: z.string().regex(/^[0-9]+$/, { message: "Contact number can only contain digits." })
+    email: z
+      .string()
+      .email("Invalid email address")
+      .min(1, "Email is required"),
+    phone: z
+      .string()
+      .regex(/^[0-9]+$/, { message: "Contact number can only contain digits." })
       .length(10, { message: "Contact number must be exactly 10 digits." })
       .refine((val) => val.startsWith("9"), {
         message: "Contact number must start with 9.",
@@ -47,6 +61,8 @@ const signupSchema = z
 type SignupFormData = z.infer<typeof signupSchema>;
 
 export default function SignupPage() {
+  const [showPassword, setShowPassword] = useState(false);
+  const [showPasswordConfirm, setShowPasswordConfirm] = useState(false);
   const {
     register,
     handleSubmit,
@@ -56,16 +72,27 @@ export default function SignupPage() {
     resolver: zodResolver(signupSchema),
   });
 
+  const togglePasswordVisibility = () => {
+    setShowPassword((prevState: any) => !prevState);
+  };
+
+  const togglePasswordVisibilityConfirm = () => {
+    setShowPasswordConfirm((prevState: any) => !prevState);
+  };
+
   // Handle form submission
   const onSubmit = async (data: SignupFormData) => {
     try {
-      const response = await fetch('http://localhost:4000/api/signup/register', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      });
+      const response = await fetch(
+        "http://localhost:4000/api/signup/register",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        }
+      );
 
       if (response.ok) {
         alert("User registered successfully!");
@@ -83,7 +110,9 @@ export default function SignupPage() {
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-gray-50 to-gray-100">
       <Card className="w-full max-w-md">
         <CardHeader>
-          <CardTitle className="text-2xl font-bold text-center">Sign Up</CardTitle>
+          <CardTitle className="text-2xl font-bold text-center">
+            Sign Up
+          </CardTitle>
           <CardDescription className="text-center">
             Create an account to get started.
           </CardDescription>
@@ -100,7 +129,9 @@ export default function SignupPage() {
                 {...register("username")}
               />
               {errors.username && (
-                <p className="text-sm text-red-500">{errors.username.message}</p>
+                <p className="text-sm text-red-500">
+                  {errors.username.message}
+                </p>
               )}
             </div>
 
@@ -135,41 +166,61 @@ export default function SignupPage() {
             {/* Password Field */}
             <div className="space-y-2">
               <Label htmlFor="password">Password</Label>
-              <Input
-                id="password"
-                type="password"
-                placeholder="Enter your password"
-                {...register("password")}
-              />
+              <div className="relative">
+                <Input
+                  id="password"
+                  type={showPassword ? "text" : "password"}
+                  placeholder="Enter your password"
+                  {...register("password")}
+                />
+                <div
+                  className="absolute inset-y-0 right-3 flex items-center cursor-pointer"
+                  onClick={togglePasswordVisibility}
+                >
+                  {showPassword ? <IoMdEyeOff /> : <IoMdEye />}
+                </div>
+              </div>
               {errors.password && (
-                <p className="text-sm text-red-500">{errors.password.message}</p>
+                <p className="text-sm text-red-500">
+                  {errors.password.message}
+                </p>
               )}
             </div>
 
             {/* Confirm Password Field */}
             <div className="space-y-2">
               <Label htmlFor="confirmPassword">Confirm Password</Label>
-              <Input
-                id="confirmPassword"
-                type="password"
-                placeholder="Confirm your password"
-                {...register("confirmPassword")}
-              />
+              <div className="relative">
+                <Input
+                  id="confirmPassword"
+                  type={showPasswordConfirm ? "text" : "password"}
+                  placeholder="Confirm your password"
+                  {...register("confirmPassword")}
+                />
+                <div
+                  className="absolute inset-y-0 right-3 flex items-center cursor-pointer"
+                  onClick={togglePasswordVisibilityConfirm}
+                >
+                  {showPasswordConfirm ? <IoMdEyeOff /> : <IoMdEye />}
+                </div>
+              </div>
               {errors.confirmPassword && (
-                <p className="text-sm text-red-500">{errors.confirmPassword.message}</p>
+                <p className="text-sm text-red-500">
+                  {errors.confirmPassword.message}
+                </p>
               )}
             </div>
 
             {/* Submit Button */}
-            <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700 cursor-pointer">
+            <Button
+              type="submit"
+              className="w-full bg-blue-600 hover:bg-blue-700 cursor-pointer"
+            >
               Sign Up
             </Button>
           </form>
           <div className="text-left">
-            <a
-              href="/login"
-              className="text-sm text-blue-600 hover:underline"
-            >
+            <a href="/login" className="text-sm text-blue-600 hover:underline">
               Have an account? Log in
             </a>
           </div>
