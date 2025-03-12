@@ -12,9 +12,10 @@ import {
   DialogHeader,
   DialogTitle,
   DialogFooter,
-} from "@/components/ui/dialog";
+  DialogDescription,
+} from "@/components/ui/dialog"; // Import Dialog components
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { Edit } from "lucide-react"; // Import the pencil icon
+import { Edit, Trash } from "lucide-react"; // Import the edit and trash icons
 
 interface Note {
   id: number;
@@ -35,6 +36,8 @@ const Page = () => {
   const [notes, setNotes] = useState<Note[]>([]);
   const [isLoadingNotes, setIsLoadingNotes] = useState<boolean>(false);
   const [editingNote, setEditingNote] = useState<Note | null>(null); // Track which note is being edited
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState<boolean>(false); // State for delete confirmation dialog
+  const [noteToDelete, setNoteToDelete] = useState<number | null>(null); // Track which note is being deleted
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -115,6 +118,41 @@ const Page = () => {
     setNoteTitle(note.title);
     setNoteContent(note.content);
     setIsModalOpen(true);
+  };
+
+  const handleDeleteNoteClick = (noteId: number) => {
+    setNoteToDelete(noteId); // Set the note ID to delete
+    setIsDeleteDialogOpen(true); // Open the delete confirmation dialog
+  };
+
+  const handleDeleteNote = async () => {
+    if (noteToDelete === null) return;
+
+    try {
+      const response = await fetch(
+        `http://localhost:4000/api/deleteNote/delete-note/${isUserId}/${noteToDelete}`,
+        {
+          method: "DELETE",
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to delete note");
+      }
+
+      const data = await response.json();
+      console.log("Note deleted successfully:", data);
+
+      // Close the delete confirmation dialog
+      setIsDeleteDialogOpen(false);
+      setNoteToDelete(null);
+
+      // Refetch notes after deletion
+      fetchNotes();
+    } catch (error) {
+      console.error("Error deleting note:", error);
+      alert("Failed to delete note. Please try again.");
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -217,7 +255,7 @@ const Page = () => {
             </h1>
             <Button
               onClick={handleCreateNoteClick}
-              className="cursor-pointer mb-6"
+              className="cursor-pointer mb-6 bg-blue-600 hover:bg-blue-700"
             >
               Create Note
             </Button>
@@ -235,12 +273,20 @@ const Page = () => {
                 >
                   <CardHeader>
                     <CardTitle>{note.title}</CardTitle>
-                    <button
-                      onClick={() => handleEditNoteClick(note)}
-                      className="absolute top-2 right-2 p-1 hover:bg-gray-100 rounded"
-                    >
-                      <Edit className="h-4 w-4" />
-                    </button>
+                    <div className="absolute top-2 right-2 flex gap-2">
+                      <button
+                        onClick={() => handleEditNoteClick(note)}
+                        className="p-1 hover:bg-gray-100 rounded"
+                      >
+                        <Edit className="h-4 w-4" />
+                      </button>
+                      <button
+                        onClick={() => handleDeleteNoteClick(note.id)}
+                        className="p-1 hover:bg-gray-100 rounded text-red-600"
+                      >
+                        <Trash className="h-4 w-4" />
+                      </button>
+                    </div>
                   </CardHeader>
                   <CardContent>
                     <p>{note.content}</p>
@@ -256,6 +302,7 @@ const Page = () => {
         <p>Loading...</p>
       )}
 
+      {/* Create/Edit Note Dialog */}
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
@@ -316,6 +363,34 @@ const Page = () => {
               </Button>
             </DialogFooter>
           </form>
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Delete Note</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to delete this note? This action cannot be undo.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setIsDeleteDialogOpen(false)}
+            >
+              Cancel
+            </Button>
+            <Button
+              type="button"
+              className="bg-red-600 hover:bg-red-700"
+              onClick={handleDeleteNote}
+            >
+              Delete
+            </Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
     </div>
