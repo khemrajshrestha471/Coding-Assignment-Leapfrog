@@ -79,7 +79,7 @@ export default function Navbar() {
               Contact
             </Button>
           </Link>
-          <Link href="/get-started">
+          <Link href="/login">
             <Button className="bg-blue-600 hover:bg-blue-700 text-white">
               Get Started
             </Button>
@@ -125,7 +125,7 @@ export default function Navbar() {
               Contact
             </Button>
           </Link>
-          <Link href="/get-started">
+          <Link href="/login">
             <Button className="w-full justify-start bg-blue-600 hover:bg-blue-700 text-white">
               Get Started
             </Button>
