@@ -1,8 +1,11 @@
 const express = require("express");
 const bcrypt = require("bcrypt");
 const pool = require("../../database/db");
+const jwt = require('jsonwebtoken');
 
 const router = express.Router();
+
+const JWT_SECRET = process.env.JWT_SECRET
 
 router.post("/enter", async (req, res) => {
   try {
@@ -26,6 +29,19 @@ router.post("/enter", async (req, res) => {
       return res.status(401).json({ error: "Invalid password." });
     }
 
+    const token = jwt.sign(
+      { userId: user.id, username: user.username },
+      JWT_SECRET,
+      { expiresIn: '1d' }
+    );
+
+        // Send token to client
+        res.cookie('token', token, {
+          httpOnly: true,
+          secure: process.env.SESSION_SECRET,
+          maxAge: 1 * 60 * 60 * 1000,
+        });
+
     // Password is correct, return user data (excluding the password)
     res.status(200).json({
       message: "Login successful",
@@ -34,6 +50,7 @@ router.post("/enter", async (req, res) => {
         username: user.username,
         email: user.email,
       },
+      token: token,
     });
 
   } catch (error) {

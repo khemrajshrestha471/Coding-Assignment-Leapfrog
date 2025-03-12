@@ -42,10 +42,13 @@ export default function LoginPage() {
         },
         body: JSON.stringify(data),
       });
-
+      const responseData = await response.json();
       if (response.ok) {
         // If login is successful, navigate to the dashboard
         router.push('/dashboard');
+        if (responseData.token) {
+          localStorage.setItem("token", responseData.token);
+        }
       } else {
         const errorData = await response.json();
         // console.error("Login failed:", errorData.message);

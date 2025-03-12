@@ -2,12 +2,15 @@ const express = require('express');
 const dotenv = require('dotenv');
 const cors = require('cors');
 const bodyParser = require("body-parser");
+
 const signupRoute = require('./api/signup'); // Import the signup route
 const loginRoute = require('./api/login'); // Import the login route
 
 dotenv.config();
 
 const app = express();
+
+
 
 // CORS checks
 app.use(cors({
