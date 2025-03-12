@@ -14,6 +14,7 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Edit } from "lucide-react"; // Import the pencil icon
 
 interface Note {
   id: number;
@@ -31,8 +32,10 @@ const Page = () => {
   const [noteTitle, setNoteTitle] = useState<string>("");
   const [noteContent, setNoteContent] = useState<string>("");
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
-  const [notes, setNotes] = useState<Note[]>([]); // State to store fetched notes
+  const [notes, setNotes] = useState<Note[]>([]);
   const [isLoadingNotes, setIsLoadingNotes] = useState<boolean>(false);
+  const [editingNote, setEditingNote] = useState<Note | null>(null); // Track which note is being edited
+
   useEffect(() => {
     const token = localStorage.getItem("token");
 
@@ -93,7 +96,7 @@ const Page = () => {
         throw new Error("Failed to fetch notes");
       }
       const data = await response.json();
-      setNotes(data); // Store fetched notes in state
+      setNotes(data);
     } catch (error) {
       console.error("Error fetching notes:", error);
       alert("Failed to fetch notes. Please try again.");
@@ -103,12 +106,20 @@ const Page = () => {
   };
 
   const handleCreateNoteClick = () => {
+    setEditingNote(null); // Reset editing note
+    setIsModalOpen(true);
+  };
+
+  const handleEditNoteClick = (note: Note) => {
+    setEditingNote(note); // Set the note being edited
+    setNoteTitle(note.title);
+    setNoteContent(note.content);
     setIsModalOpen(true);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsSubmitting(true); // Start loading
+    setIsSubmitting(true);
     try {
       const response = await fetch(
         "http://localhost:4000/api/addNote/add-note",
@@ -136,16 +147,60 @@ const Page = () => {
       setIsModalOpen(false);
       setNoteTitle("");
       setNoteContent("");
+      setEditingNote(null);
       // Refetch notes after adding a new note
       fetchNotes();
     } catch (error) {
       console.error("Error submitting note:", error);
       alert("Failed to submit note. Please try again.");
     } finally {
-      setIsSubmitting(false); // Stop loading
+      setIsSubmitting(false);
     }
   };
-  // };
+
+  const handleUpdate = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    try {
+      if (!editingNote) {
+        throw new Error("No note is being edited");
+      }
+
+      const response = await fetch(
+        `http://localhost:4000/api/updateNote/update-note/${isUserId}/${editingNote.id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            title: noteTitle,
+            content: noteContent,
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to update note");
+      }
+
+      const data = await response.json();
+      console.log("Note updated successfully:", data);
+
+      // Reset form and close modal
+      setIsModalOpen(false);
+      setNoteTitle("");
+      setNoteContent("");
+      setEditingNote(null);
+      // Refetch notes after updating a note
+      fetchNotes();
+    } catch (error) {
+      console.error("Error updating note:", error);
+      alert("Failed to update note. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   const handleClear = () => {
     setNoteTitle("");
@@ -156,16 +211,16 @@ const Page = () => {
     <div className="p-6">
       {storeUsername ? (
         <>
-        <div className="headerContent flex justify-between items-center">
-          <h1 className="text-2xl font-bold mb-4">
-            Welcome back, <span className="text-blue-600">{storeUsername}</span>
-          </h1>
-          <Button
-            onClick={handleCreateNoteClick}
-            className="cursor-pointer mb-6"
-          >
-            Create Note
-          </Button>
+          <div className="headerContent flex justify-between items-center">
+            <h1 className="text-2xl font-bold mb-4">
+              Welcome back, <span className="text-blue-600">{storeUsername}</span>
+            </h1>
+            <Button
+              onClick={handleCreateNoteClick}
+              className="cursor-pointer mb-6"
+            >
+              Create Note
+            </Button>
           </div>
 
           {/* Display fetched notes in a responsive grid */}
@@ -176,10 +231,16 @@ const Page = () => {
               notes.map((note) => (
                 <Card
                   key={note.id}
-                  className="flex-1 min-w-[250px] max-w-[350px]"
+                  className="flex-1 min-w-[250px] max-w-[350px] relative"
                 >
                   <CardHeader>
                     <CardTitle>{note.title}</CardTitle>
+                    <button
+                      onClick={() => handleEditNoteClick(note)}
+                      className="absolute top-2 right-2 p-1 hover:bg-gray-100 rounded"
+                    >
+                      <Edit className="h-4 w-4" />
+                    </button>
                   </CardHeader>
                   <CardContent>
                     <p>{note.content}</p>
@@ -198,9 +259,9 @@ const Page = () => {
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
-            <DialogTitle>Create Note</DialogTitle>
+            <DialogTitle>{editingNote ? "Edit Note" : "Create Note"}</DialogTitle>
           </DialogHeader>
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={editingNote ? handleUpdate : handleSubmit}>
             <div className="grid gap-4 py-4">
               <div className="grid grid-cols-4 items-center gap-4">
                 <label htmlFor="title" className="text-right">
@@ -228,13 +289,23 @@ const Page = () => {
               </div>
             </div>
             <DialogFooter>
-              <Button
-                type="submit"
-                disabled={isSubmitting}
-                className="cursor-pointer"
-              >
-                {isSubmitting ? "Submitting..." : "Submit"}
-              </Button>
+              {editingNote ? (
+                <Button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="cursor-pointer"
+                >
+                  {isSubmitting ? "Updating..." : "Update"}
+                </Button>
+              ) : (
+                <Button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="cursor-pointer"
+                >
+                  {isSubmitting ? "Submitting..." : "Submit"}
+                </Button>
+              )}
               <Button
                 type="button"
                 variant="outline"
