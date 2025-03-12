@@ -1,0 +1,54 @@
+const express = require("express");
+const pool = require("../../database/db"); // Importing the pool for the connection to the postgres database
+
+const router = express.Router();
+
+// PUT /update-note/:user_id/:note_id - Update a specific note by user_id and note_id
+router.put("/update-note/:user_id/:note_id", async (req, res) => {
+  try {
+    const { user_id, note_id } = req.params; // Get user_id and note_id from the URL params
+    const { title, content } = req.body; // Get the updated title and/or content from the request body
+
+    // Validate that at least one field (title or content) is provided for update
+    if (!title && !content) {
+      return res.status(400).json({ error: "At least one field (title or content) is required for update" });
+    }
+
+    // Construct the SQL query dynamically based on the fields provided
+    let query = "UPDATE Notes SET ";
+    const values = [];
+    let paramIndex = 1;
+
+    if (title) {
+      query += `title = $${paramIndex}, `;
+      values.push(title);
+      paramIndex++;
+    }
+
+    if (content) {
+      query += `content = $${paramIndex}, `;
+      values.push(content);
+      paramIndex++;
+    }
+
+    // Remove the trailing comma and space, then add the WHERE clause
+    query = query.slice(0, -2) + ` WHERE user_id = $${paramIndex} AND id = $${paramIndex + 1} RETURNING id, user_id, title, content, created_at, updated_at`;
+    values.push(user_id, note_id);
+
+    // Execute the update query
+    const updatedNote = await pool.query(query, values);
+
+    // Check if the note was found and updated
+    if (updatedNote.rows.length === 0) {
+      return res.status(404).json({ error: "Note not found or does not belong to the user" });
+    }
+
+    // Send the updated note as the response
+    res.status(200).json(updatedNote.rows[0]);
+  } catch (error) {
+    console.error("Error updating note:", error); // Log the error
+    res.status(500).json({ error: "Failed to update note" }); // Send a 500 error response
+  }
+});
+
+module.exports = router;

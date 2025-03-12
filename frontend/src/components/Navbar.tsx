@@ -12,6 +12,8 @@ export default function Navbar() {
   const [isSticky, setIsSticky] = useState(false);
   const [expiryTime, setExpiryTime] = useState(0);
   const [showGetStarted, setShowGetStarted] = useState(true);
+  const [storeUsername, setStoreUsername] = useState("");
+  const [isUserId, setIsUserId] = useState("");
   const router = useRouter();
 
   useEffect(() => {
@@ -20,6 +22,8 @@ export default function Navbar() {
     if (token) {
       try {
         const decodedToken = decodeToken(token);
+        setStoreUsername(decodedToken.username);
+        setIsUserId(decodedToken.userId);
         if (decodedToken && decodedToken.exp) {
           setExpiryTime(decodedToken.exp);
           setShowGetStarted(false);
@@ -62,7 +66,7 @@ export default function Navbar() {
     localStorage.removeItem("token");
     setShowGetStarted(true);
     router.push("/login");
-  }
+  };
 
   return (
     <nav
@@ -121,11 +125,20 @@ export default function Navbar() {
             </Link>
           ) : (
             <>
-              {/* <Link href="/login"> */}
-                <Button className="bg-blue-600 hover:bg-blue-700 text-white cursor-pointer" onClick={LogOut}>
-                  Log Out
+              <Link href={`/dashboard?username=${storeUsername}&Id=${isUserId}`}>
+                <Button
+                  variant="ghost"
+                  className="text-gray-600 hover:text-blue-600"
+                >
+                  Dashboard
                 </Button>
-              {/* </Link> */}
+              </Link>
+              <Button
+                className="bg-red-600 hover:bg-red-700 text-white cursor-pointer"
+                onClick={LogOut}
+              >
+                Log Out
+              </Button>
             </>
           )}
         </div>
@@ -176,11 +189,22 @@ export default function Navbar() {
               </Button>
             </Link>
           ) : (
-            // <Link href="/login">
-              <Button className="w-full justify-start bg-blue-600 hover:bg-blue-700 text-white cursor-pointer" onClick={LogOut}>
+            <>
+              <Link href={`/dashboard?username=${storeUsername}&Id=${isUserId}`}>
+                <Button
+                  variant="ghost"
+                  className="text-gray-600 hover:text-blue-600"
+                >
+                  Dashboard
+                </Button>
+              </Link>
+              <Button
+                className="w-full justify-start bg-red-600 hover:bg-red-700 text-white cursor-pointer"
+                onClick={LogOut}
+              >
                 Log Out
               </Button>
-            // </Link>
+            </>
           )}
         </div>
       </div>

@@ -6,6 +6,7 @@ import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useRouter } from "next/navigation";
 import {
   Card,
   CardHeader,
@@ -63,6 +64,7 @@ type SignupFormData = z.infer<typeof signupSchema>;
 export default function SignupPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [showPasswordConfirm, setShowPasswordConfirm] = useState(false);
+  const router = useRouter();
   const {
     register,
     handleSubmit,
@@ -97,6 +99,7 @@ export default function SignupPage() {
       if (response.ok) {
         alert("User registered successfully!");
         reset();
+        router.push("/login");
       } else {
         const errorData = await response.json();
         console.error("Registration failed:", errorData.message);
@@ -107,8 +110,9 @@ export default function SignupPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-gray-50 to-gray-100">
-      <Card className="w-full max-w-md">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-gray-50 to-gray-100 overflow-hidden absolute inset-0">
+
+    <Card className="w-full max-w-md mt-15">
         <CardHeader>
           <CardTitle className="text-2xl font-bold text-center">
             Sign Up
