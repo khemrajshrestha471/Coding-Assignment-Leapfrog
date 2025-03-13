@@ -17,6 +17,8 @@ import {
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Edit, Trash } from "lucide-react"; // Import the edit and trash icons
 
+import NotesSortButton from "@/components/SortNotes";
+
 interface Note {
   id: number;
   user_id: string;
@@ -42,6 +44,8 @@ const Page = () => {
   const [editingNote, setEditingNote] = useState<Note | null>(null); // Track which note is being edited
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState<boolean>(false); // State for delete confirmation dialog
   const [noteToDelete, setNoteToDelete] = useState<number | null>(null); // Track which note is being deleted
+  const [totalNotesDatabase, setTotalNotesDatabase] = useState<number | null>(null); // Track
+  const [sortBy, setSortBy] = useState("created_at"); // Default sort by creation date
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -89,7 +93,7 @@ const Page = () => {
   // Fetch notes when isUserId changes
   useEffect(() => {
     if (isUserId) {
-    fetchNotes(currentPage); // Fetch initial notes when the component mounts
+      fetchNotes(currentPage); // Fetch initial notes when the component mounts
     }
   }, [isUserId]); // Re-fetch notes if isUserId changes
 
@@ -99,18 +103,25 @@ const Page = () => {
       return; // Exit the function if isUserId is not set
     }
     setIsLoadingNotes(true);
+    const limit = 5; // Set the limit for the number of notes to fetch per request
     try {
       const response = await fetch(
-        `http://localhost:4000/api/fetchNote/notes/${isUserId}?page=${page}&limit=2`
+        `http://localhost:4000/api/fetchNote/notes/${isUserId}?page=${page}&limit=${limit}`
       );
       if (!response.ok) {
         throw new Error("Failed to fetch notes");
       }
-      const data = await response.json();
-      if (data.length > 0) {
-        setNotes((prevNotes) => [...prevNotes, ...data]); // Append new notes to the existing list
-        setHasMoreNotes(data.length === 2); // Check if there are more notes to fetch
-      } else {
+      const { notes: newNotes = [], totalNotes = 0 } = await response.json();
+      setTotalNotesDatabase(totalNotes);
+      if (newNotes.length > 0) {
+        setNotes((prevNotes) => {
+          const updatedNotes = [...prevNotes, ...newNotes]; // Append new notes to the existing list
+          // Check if there are more notes to fetch
+          setHasMoreNotes(updatedNotes.length < totalNotes);
+          return updatedNotes;
+        });
+      } 
+      else {
         setHasMoreNotes(false); // No more notes to fetch
       }
     } catch (error) {
@@ -118,6 +129,32 @@ const Page = () => {
       alert("Failed to fetch notes. Please try again.");
     } finally {
       setIsLoadingNotes(false);
+    }
+  };
+
+  const handleSortChange = (newSortBy: string) => {
+    setSortBy(newSortBy);
+    // Fetch or sort notes based on the newSortBy value
+    fetchSortedNotes(newSortBy);
+  };
+
+  const fetchSortedNotes = async (sortBy: string) => {
+    if (!isUserId) {
+      console.error("User ID is missing");
+      return; // Exit the function if isUserId is not set
+    }
+    try {
+      const response = await fetch(
+        `http://localhost:4000/api/sortNote/sort-notes/${isUserId}?sortBy=${sortBy}`
+      );
+      if (!response.ok) {
+        throw new Error("Failed to fetch notes");
+      }
+      const data = await response.json();
+      setNotes(data);
+    } catch (error) {
+      console.error("Error fetching notes:", error);
+      alert("Failed to fetch notes. Please try again111.");
     }
   };
 
@@ -281,14 +318,19 @@ const Page = () => {
             </Button>
           </div>
 
+          <div className="flex justify-end mb-4">
+            <NotesSortButton onSortChange={handleSortChange} />
+          </div>
           {/* Display fetched notes in a responsive grid */}
           <div className="flex flex-wrap gap-4">
             {isLoadingNotes && currentPage === 1 ? (
               <p>Loading notes...</p>
             ) : notes.length > 0 ? (
-              notes.map((note) => (
+              <>
+              {/* {console.log("Number of notes displayed:", notes.length)} */}
+              {notes.map((note, index) => (
                 <Card
-                  key={note.id}
+                  key={`${note.id}-${index}`} // Combine ID and index for uniqueness
                   className="flex-1 min-w-[250px] max-w-[350px] relative"
                 >
                   <CardHeader>
@@ -320,12 +362,13 @@ const Page = () => {
                     )}
                   </CardContent>
                 </Card>
-              ))
+              ))}
+              </>
             ) : (
               <p>No notes found.</p>
             )}
           </div>
-          {hasMoreNotes && (
+          {hasMoreNotes && notes.length !== totalNotesDatabase && (
             <div className="flex justify-center mt-4">
               <button
                 onClick={handleLoadMore}
@@ -336,7 +379,6 @@ const Page = () => {
               </button>
             </div>
           )}
-        
         </>
       ) : (
         <p>Loading...</p>

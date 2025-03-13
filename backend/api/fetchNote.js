@@ -18,6 +18,13 @@ router.get("/notes/:user_id", async (req, res) => {
 
     const offset = (page - 1) * limit; // Calculate the offset
 
+    // Query 1: Count the total number of notes for the user
+    const countQuery = await pool.query(
+      `SELECT COUNT(*) FROM Notes WHERE user_id = $1`,
+      [user_id]
+    );
+    const totalNotes = parseInt(countQuery.rows[0].count); // Extract the total count
+
     // Fetch notes from PostgreSQL
     const result = await pool.query(
       `SELECT * FROM Notes WHERE user_id = $1 ORDER BY created_at DESC LIMIT $2 OFFSET $3`,
@@ -25,7 +32,10 @@ router.get("/notes/:user_id", async (req, res) => {
     );
 
     // Send the fetched notes as the response
-    res.status(200).json(result.rows);
+    res.status(200).json({
+      notes: result.rows, // Paginated notes
+      totalNotes: totalNotes, // Total number of notes
+    });
   } catch (error) {
     console.error("Error fetching notes:", error); // Log the error
     res.status(500).json({ error: "Failed to fetch notes" }); // Send a 500 error response
