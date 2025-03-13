@@ -16,6 +16,12 @@ import {
 } from "@/components/ui/dialog"; // Import Dialog components
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Edit, Trash } from "lucide-react"; // Import the edit and trash icons
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationNext,
+} from "@/components/ui/pagination";
 
 import NotesSortButton from "@/components/SortNotes";
 import SearchNotes from "@/components/SearchNotes";
@@ -40,7 +46,7 @@ const Page = () => {
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [notes, setNotes] = useState<Note[]>([]);
   const [currentPage, setCurrentPage] = useState(1); // Track the current page
-  const [hasMoreNotes, setHasMoreNotes] = useState(true); // Track if more notes are available
+  const [totalPages, setTotalPages] = useState(1);
   const [isLoadingNotes, setIsLoadingNotes] = useState<boolean>(false);
   const [editingNote, setEditingNote] = useState<Note | null>(null); // Track which note is being edited
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState<boolean>(false); // State for delete confirmation dialog
@@ -48,6 +54,7 @@ const Page = () => {
   const [totalNotesDatabase, setTotalNotesDatabase] = useState<number | null>(
     null
   ); // Track
+  const [showPaginationOnSearch, setShowPaginationOnSearch] = useState(true);
   const [sortBy, setSortBy] = useState("created_at"); // Default sort by creation date
   const [isSearching, setIsSearching] = useState(false); // State for search loading
 
@@ -99,7 +106,7 @@ const Page = () => {
     if (isUserId) {
       fetchNotes(currentPage); // Fetch initial notes when the component mounts
     }
-  }, [isUserId]); // Re-fetch notes if isUserId changes
+  }, [isUserId, currentPage]); // Re-fetch notes if isUserId changes
 
   const fetchNotes = async (page: any) => {
     if (!isUserId) {
@@ -107,7 +114,7 @@ const Page = () => {
       return; // Exit the function if isUserId is not set
     }
     setIsLoadingNotes(true);
-    const limit = 5; // Set the limit for the number of notes to fetch per request
+    const limit = 2; // Set the limit for the number of notes to fetch per request
     try {
       const response = await fetch(
         `http://localhost:4000/api/fetchNote/notes/${isUserId}?page=${page}&limit=${limit}`
@@ -121,11 +128,9 @@ const Page = () => {
         setNotes((prevNotes) => {
           const updatedNotes = [...prevNotes, ...newNotes]; // Append new notes to the existing list
           // Check if there are more notes to fetch
-          setHasMoreNotes(updatedNotes.length < totalNotes);
           return updatedNotes;
         });
-      } else {
-        setHasMoreNotes(false); // No more notes to fetch
+        setTotalPages(Math.ceil(totalNotes / limit));
       }
     } catch (error) {
       console.error("Error fetching notes:", error);
@@ -135,8 +140,13 @@ const Page = () => {
     }
   };
 
+  // Handle page change
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page); // Update current page
+  };
+
   // Handle search
-  const handleSearch = async (query: string) => {
+  const handleSearch = async (query: string, isFromSearch: boolean) => {
     setIsSearching(true);
     try {
       const response = await fetch(
@@ -149,6 +159,15 @@ const Page = () => {
       }
       const data = await response.json();
       setNotes(data); // Update notes with search results
+      setTimeout(() => {
+        setIsSearching(false);
+        if(isFromSearch){
+            setShowPaginationOnSearch(false);
+        } else{
+            setShowPaginationOnSearch(true);
+        }
+        //handle your search result here.
+    }, 1000);
     } catch (error) {
       console.error("Error searching notes:", error);
       alert("Failed to search notes. Please try again.");
@@ -159,7 +178,9 @@ const Page = () => {
 
   const handleReset = async () => {
     setNotes([]); // Clear the notes state before fetching
+    handlePageChange(1)
     await fetchNotes(currentPage); // Fetch all notes
+    setShowPaginationOnSearch(true);
   };
 
   const handleSortChange = (newSortBy: string) => {
@@ -186,12 +207,6 @@ const Page = () => {
       console.error("Error fetching notes:", error);
       alert("Failed to fetch notes. Please try again111.");
     }
-  };
-
-  const handleLoadMore = () => {
-    const nextPage = currentPage + 1;
-    setCurrentPage(nextPage);
-    fetchNotes(nextPage); // Fetch the next batch of notes
   };
 
   const handleCreateNoteClick = () => {
@@ -407,7 +422,7 @@ const Page = () => {
                       </p>
                       {note.updated_at !== note.created_at && (
                         <p className="text-sm text-gray-500 mt-2">
-                          Updated at:{" "}
+                          Updated at:
                           {new Date(note.updated_at).toLocaleString()}
                         </p>
                       )}
@@ -419,16 +434,32 @@ const Page = () => {
               <p>No notes found.</p>
             )}
           </div>
-          {hasMoreNotes && notes.length !== totalNotesDatabase && (
-            <div className="flex justify-center mt-4">
-              <button
-                onClick={handleLoadMore}
-                className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 cursor-pointer"
-                disabled={isLoadingNotes}
-              >
-                {isLoadingNotes ? "Loading..." : "Load More"}
-              </button>
-            </div>
+          {notes.length !== totalNotesDatabase && showPaginationOnSearch && (
+          <div className="flex justify-center mt-4">
+            <Pagination>
+              <PaginationContent>
+
+                {/* Current Page Display */}
+                <PaginationItem>
+                  <span className="px-4 py-2">
+                    Page {currentPage} of {totalPages}
+                  </span>
+                </PaginationItem>
+
+                {/* Next Button */}
+                <PaginationItem>
+                  <PaginationNext
+                    onClick={() => handlePageChange(currentPage + 1)}
+                    className={
+                      currentPage === totalPages || isLoadingNotes
+                        ? "pointer-events-none opacity-50"
+                        : ""
+                    }
+                  />
+                </PaginationItem>
+              </PaginationContent>
+            </Pagination>
+          </div>
           )}
         </>
       ) : (

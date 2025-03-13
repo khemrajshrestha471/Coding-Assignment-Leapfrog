@@ -5,7 +5,7 @@ import { Loader2 } from "lucide-react"; // Import loading spinner from lucide-re
 
 interface SearchNotesProps {
   userId: string; // User ID for fetching notes
-  onSearch: (query: string) => void; // Callback to handle search results
+  onSearch: (query: string, isFromSearch: boolean) => void; // Callback to handle search results
   onReset: () => void; // Callback to reset search
   isSearching: boolean; // Loading state for search
 }
@@ -24,7 +24,7 @@ const SearchNotes: React.FC<SearchNotesProps> = ({
       alert("Please enter a search term.");
       return;
     }
-    onSearch(searchQuery); // Trigger search in parent component
+    onSearch(searchQuery, true); // Trigger search in parent component
   };
 
   // Handle reset button click
