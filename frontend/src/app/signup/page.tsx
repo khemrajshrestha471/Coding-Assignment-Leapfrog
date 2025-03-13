@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useRouter } from "next/navigation";
+import { sonner } from "@/components/ui/sonner";
 import {
   Card,
   CardHeader,
@@ -100,6 +101,25 @@ export default function SignupPage() {
   const onSubmit = async (data: SignupFormData) => {
     setLoading(true);
     try {
+      const checkExistenceResponse = await fetch(
+        "http://localhost:4000/api/checkExistence/check-existence",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ email: data.email, phone: data.phone }),
+        }
+      );
+      if (!checkExistenceResponse.ok) {
+        reset();
+        setLoading(false);
+        return sonner.error(
+          <span className="text-red-500">
+            Email or Phone Number already exists.
+          </span>
+        );
+      }
       // Save the email for OTP verification
       setEmail(data.email);
       setFormData(data);
@@ -122,18 +142,33 @@ export default function SignupPage() {
         setLoading(false);
       } else {
         const errorData = await otpResponse.json();
-        console.error("Failed to send OTP:", errorData.message);
-        alert("Failed to send OTP. Please try again.");
+        sonner.error(
+          <span className="text-red-500">Failed to send OTP.</span>,
+          {
+            description: (
+              <span className="text-red-500">{errorData.message}</span>
+            ),
+          }
+        );
       }
-    } catch (error) {
-      console.error("Error during OTP sending:", error);
-      alert("An error occurred. Please try again.");
+    } catch (error: any) {
+      sonner.error(
+        <span className="text-red-500">Error during OTP sending.</span>,
+        {
+          description: <span className="text-red-500">{error}</span>,
+        }
+      );
     }
   };
 
   // Handle OTP verification
   const handleOtpVerification = async () => {
-    if (!formData) return alert("Form data is missing. Please try again.");
+    if (!formData)
+      return sonner.error(
+        <span className="text-red-500">
+          Form data is missing. Please try again.
+        </span>
+      );
     try {
       const verifyResponse = await fetch(
         "http://localhost:4000/api/handleOtp/verify-otp",
@@ -159,21 +194,44 @@ export default function SignupPage() {
         );
 
         if (registrationResponse.ok) {
-          alert("User registered successfully!");
-          reset();
+          sonner.success(
+            <span className="text-green-500">
+              User registered successfully!
+            </span>
+          );
+          // reset();
+          setOtp(""); // Reset OTP input field
           router.push("/login");
         } else {
           const errorData = await registrationResponse.json();
-          console.error("Registration failed:", errorData.message);
+          sonner.error(
+            <span className="text-red-500">
+              Email or Phone should be unique.
+            </span>,
+            {
+              description: (
+                <span className="text-red-500">{errorData.message}</span>
+              ),
+            }
+          );
         }
       } else {
+        setOtp("");
         const errorData = await verifyResponse.json();
-        console.error("OTP verification failed:", errorData.message);
-        alert("Invalid OTP. Please try again.");
+        sonner.error(
+          <span className="text-red-500">OTP verification failed.</span>,
+          {
+            description: (
+              <span className="text-red-500">{errorData.message}</span>
+            ),
+          }
+        );
       }
-    } catch (error) {
-      console.error("Error during OTP verification:", error);
-      alert("An error occurred. Please try again.");
+    } catch (error: any) {
+      setOtp("");
+      sonner.error(
+        <span className="text-red-500">OTP verification Failed.</span>
+      );
     }
   };
 
@@ -324,7 +382,7 @@ export default function SignupPage() {
             />
             <Button
               onClick={handleOtpVerification}
-              className="w-full bg-blue-600 hover:bg-blue-700"
+              className="w-full bg-blue-600 hover:bg-blue-700 cursor-pointer"
             >
               Verify OTP
             </Button>

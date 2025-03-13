@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { IoMdEye, IoMdEyeOff } from "react-icons/io";
+import { sonner } from '@/components/ui/sonner';
 import {
   Card,
   CardHeader,
@@ -72,8 +73,6 @@ export default function LoginPage() {
       });
       const responseData = await response.json();
       if (response.ok) {
-        // If login is successful, navigate to the dashboard
-        // router.push('/dashboard');
         if (responseData.token) {
           localStorage.setItem("token", responseData.token);
         }
@@ -87,18 +86,17 @@ export default function LoginPage() {
         }
       } else {
         const errorData = await response.json();
-        // console.error("Login failed:", errorData.message);
-        alert("Login failed. Please check your credentials.");
+      sonner.error(<span className="text-red-500">Login failed. Please check your credentials.</span>, {
+        description: <span className="text-red-500">{errorData.message}</span>,
+    });
       }
       reset();
-    } catch (error) {
-      console.error("Error during login:", error);
-      alert("Error occurred during login.");
+    } catch (error:any) {
+      sonner.error(<span className="text-red-500">Login failed. Please check your credentials.</span>);
     }
   };
 
   return (
-    // <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-gray-50 to-gray-100">
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-gray-50 to-gray-100 overflow-hidden absolute inset-0">
 
       <Card className="w-full max-w-md">
