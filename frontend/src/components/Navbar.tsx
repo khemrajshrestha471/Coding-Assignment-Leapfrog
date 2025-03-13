@@ -128,9 +128,9 @@ export default function Navbar() {
               <Link href={`/dashboard?username=${storeUsername}&Id=${isUserId}`}>
                 <Button
                   variant="ghost"
-                  className="text-gray-600 hover:text-blue-600"
+                  className="text-blue-600 hover:text-blue-700 cursor-pointer"
                 >
-                  Dashboard
+                  {storeUsername}
                 </Button>
               </Link>
               <Button
@@ -193,9 +193,9 @@ export default function Navbar() {
               <Link href={`/dashboard?username=${storeUsername}&Id=${isUserId}`}>
                 <Button
                   variant="ghost"
-                  className="text-gray-600 hover:text-blue-600"
+                  className="text-blue-600 hover:text-blue-700 cursor-pointer"
                 >
-                  Dashboard
+                  {storeUsername}
                 </Button>
               </Link>
               <Button
