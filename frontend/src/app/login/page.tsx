@@ -1,5 +1,6 @@
 "use client"; // Required for client-side interactivity
 
+import React from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -50,10 +51,12 @@ export default function LoginPage() {
     if (token) {
       // Redirect to dashboard if token exists
       const decodedToken = decodeToken(token);
+      if (decodedToken) {
       router.push(
         `/dashboard?username=${decodedToken.username}&Id=${decodedToken.userId}`
       );
     }
+  }
   }, [router]);
 
   // Handle form submission
@@ -135,6 +138,7 @@ export default function LoginPage() {
                 <div
                   className="absolute inset-y-0 right-3 flex items-center cursor-pointer"
                   onClick={togglePasswordVisibility}
+                  data-testid="toggle-password-visibility"
                 >
                   {showPassword ? (
                     <IoMdEyeOff />
