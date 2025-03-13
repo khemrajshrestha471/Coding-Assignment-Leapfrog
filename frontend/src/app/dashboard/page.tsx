@@ -22,6 +22,8 @@ interface Note {
   user_id: string;
   title: string;
   content: string;
+  created_at: string;
+  updated_at: string;
 }
 
 const Page = () => {
@@ -251,7 +253,8 @@ const Page = () => {
         <>
           <div className="headerContent flex justify-between items-center">
             <h1 className="text-2xl font-bold mb-4">
-              Welcome back, <span className="text-blue-600">{storeUsername}</span>
+              Welcome back,
+              <span className="text-blue-600">{storeUsername}</span>
             </h1>
             <Button
               onClick={handleCreateNoteClick}
@@ -290,6 +293,14 @@ const Page = () => {
                   </CardHeader>
                   <CardContent>
                     <p>{note.content}</p>
+                    <p className="text-sm text-gray-500 mt-2">
+                      Created at: {new Date(note.created_at).toLocaleString()}
+                    </p>
+                    {note.updated_at !== note.created_at && (
+                      <p className="text-sm text-gray-500 mt-2">
+                        Updated at: {new Date(note.updated_at).toLocaleString()}
+                      </p>
+                    )}
                   </CardContent>
                 </Card>
               ))
@@ -306,7 +317,9 @@ const Page = () => {
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
-            <DialogTitle>{editingNote ? "Edit Note" : "Create Note"}</DialogTitle>
+            <DialogTitle>
+              {editingNote ? "Edit Note" : "Create Note"}
+            </DialogTitle>
           </DialogHeader>
           <form onSubmit={editingNote ? handleUpdate : handleSubmit}>
             <div className="grid gap-4 py-4">
@@ -372,7 +385,8 @@ const Page = () => {
           <DialogHeader>
             <DialogTitle>Delete Note</DialogTitle>
             <DialogDescription>
-              Are you sure you want to delete this note? This action cannot be undo.
+              Are you sure you want to delete this note? This action cannot be
+              undo.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>

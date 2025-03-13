@@ -1,13 +1,13 @@
 const express = require("express");
-const pool = require("../../database/db"); // Importing the pool for the connection to the postgres database
+const pool = require("../../database/db");
+const moment = require("moment-timezone");
 
 const router = express.Router();
 
-// PUT /update-note/:user_id/:note_id - Update a specific note by user_id and note_id
 router.put("/update-note/:user_id/:note_id", async (req, res) => {
   try {
-    const { user_id, note_id } = req.params; // Get user_id and note_id from the URL params
-    const { title, content } = req.body; // Get the updated title and/or content from the request body
+    const { user_id, note_id } = req.params;
+    const { title, content } = req.body;
 
     // Validate that at least one field (title or content) is provided for update
     if (!title && !content) {
@@ -31,8 +31,15 @@ router.put("/update-note/:user_id/:note_id", async (req, res) => {
       paramIndex++;
     }
 
-    // Remove the trailing comma and space, then add the WHERE clause
-    query = query.slice(0, -2) + ` WHERE user_id = $${paramIndex} AND id = $${paramIndex + 1} RETURNING id, user_id, title, content, created_at, updated_at`;
+    // Get the current time in Asia/Kathmandu (NPT)
+    const updatedAt = moment().tz("Asia/Kathmandu").format("YYYY-MM-DD HH:mm:ss");
+
+    // Add updated_at with the local time
+    query += `updated_at = $${paramIndex} `;
+    values.push(updatedAt);
+
+    // Add the WHERE clause
+    query += `WHERE user_id = $${paramIndex + 1} AND id = $${paramIndex + 2} RETURNING id, user_id, title, content, created_at, updated_at`;
     values.push(user_id, note_id);
 
     // Execute the update query
@@ -46,8 +53,8 @@ router.put("/update-note/:user_id/:note_id", async (req, res) => {
     // Send the updated note as the response
     res.status(200).json(updatedNote.rows[0]);
   } catch (error) {
-    console.error("Error updating note:", error); // Log the error
-    res.status(500).json({ error: "Failed to update note" }); // Send a 500 error response
+    console.error("Error updating note:", error);
+    res.status(500).json({ error: "Failed to update note" });
   }
 });
 
