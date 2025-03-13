@@ -16,6 +16,13 @@ import {
 } from "@/components/ui/card";
 import { IoMdEye, IoMdEyeOff } from "react-icons/io";
 import { useState } from "react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
 
 // Define the schema for form validation using Zod
 const signupSchema = z
@@ -64,7 +71,13 @@ type SignupFormData = z.infer<typeof signupSchema>;
 export default function SignupPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [showPasswordConfirm, setShowPasswordConfirm] = useState(false);
+  const [isOtpDialogOpen, setIsOtpDialogOpen] = useState(false);
+  const [otp, setOtp] = useState("");
+  const [email, setEmail] = useState("");
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const [formData, setFormData] = useState<SignupFormData | null>(null);
+
   const {
     register,
     handleSubmit,
@@ -75,44 +88,97 @@ export default function SignupPage() {
   });
 
   const togglePasswordVisibility = () => {
-    setShowPassword((prevState: any) => !prevState);
+    setShowPassword((prevState) => !prevState);
   };
 
   const togglePasswordVisibilityConfirm = () => {
-    setShowPasswordConfirm((prevState: any) => !prevState);
+    setShowPasswordConfirm((prevState) => !prevState);
   };
 
   // Handle form submission
   const onSubmit = async (data: SignupFormData) => {
+    setLoading(true);
     try {
-      const response = await fetch(
-        "http://localhost:4000/api/signup/register",
+      // Save the email for OTP verification
+      setEmail(data.email);
+      setFormData(data);
+
+      // Send OTP to the provided email
+      const otpResponse = await fetch(
+        "http://localhost:4000/api/handleOtp/send-otp",
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify(data),
+          body: JSON.stringify({ email: data.email }),
         }
       );
 
-      if (response.ok) {
-        alert("User registered successfully!");
-        reset();
-        router.push("/login");
+      if (otpResponse.ok) {
+        // Open the OTP dialog
+        setIsOtpDialogOpen(true);
+        setLoading(false);
       } else {
-        const errorData = await response.json();
-        console.error("Registration failed:", errorData.message);
+        const errorData = await otpResponse.json();
+        console.error("Failed to send OTP:", errorData.message);
+        alert("Failed to send OTP. Please try again.");
       }
     } catch (error) {
-      console.error("Error during registration:", error);
+      console.error("Error during OTP sending:", error);
+      alert("An error occurred. Please try again.");
+    }
+  };
+
+  // Handle OTP verification
+  const handleOtpVerification = async () => {
+    if (!formData) return alert("Form data is missing. Please try again.");
+    try {
+      const verifyResponse = await fetch(
+        "http://localhost:4000/api/handleOtp/verify-otp",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ email, otp }),
+        }
+      );
+
+      if (verifyResponse.ok) {
+        const registrationResponse = await fetch(
+          "http://localhost:4000/api/signup/register",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(formData),
+          }
+        );
+
+        if (registrationResponse.ok) {
+          alert("User registered successfully!");
+          reset();
+          router.push("/login");
+        } else {
+          const errorData = await registrationResponse.json();
+          console.error("Registration failed:", errorData.message);
+        }
+      } else {
+        const errorData = await verifyResponse.json();
+        console.error("OTP verification failed:", errorData.message);
+        alert("Invalid OTP. Please try again.");
+      }
+    } catch (error) {
+      console.error("Error during OTP verification:", error);
+      alert("An error occurred. Please try again.");
     }
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-gray-50 to-gray-100 overflow-hidden absolute inset-0">
-
-    <Card className="w-full max-w-md mt-15">
+      <Card className="w-full max-w-md mt-15">
         <CardHeader>
           <CardTitle className="text-2xl font-bold text-center">
             Sign Up
@@ -214,14 +280,22 @@ export default function SignupPage() {
                 </p>
               )}
             </div>
-
-            {/* Submit Button */}
-            <Button
-              type="submit"
-              className="w-full bg-blue-600 hover:bg-blue-700 cursor-pointer"
-            >
-              Sign Up
-            </Button>
+            {loading ? (
+              <>
+                <Button type="button" className="w-full bg-gray-600" disabled>
+                  Sending OTP...
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button
+                  type="submit"
+                  className="w-full bg-blue-600 hover:bg-blue-700 cursor-pointer"
+                >
+                  Sign Up
+                </Button>
+              </>
+            )}
           </form>
           <div className="text-left">
             <a href="/login" className="text-sm text-blue-600 hover:underline">
@@ -230,6 +304,32 @@ export default function SignupPage() {
           </div>
         </CardContent>
       </Card>
+
+      {/* OTP Dialog */}
+      <Dialog open={isOtpDialogOpen} onOpenChange={setIsOtpDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Verify OTP</DialogTitle>
+            <DialogDescription>
+              Enter the OTP sent to your email address.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <Input
+              type="text"
+              placeholder="Enter OTP"
+              value={otp}
+              onChange={(e) => setOtp(e.target.value)}
+            />
+            <Button
+              onClick={handleOtpVerification}
+              className="w-full bg-blue-600 hover:bg-blue-700"
+            >
+              Verify OTP
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
