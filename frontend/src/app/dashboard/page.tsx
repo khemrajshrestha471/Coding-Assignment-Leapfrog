@@ -36,6 +36,8 @@ const Page = () => {
   const [noteContent, setNoteContent] = useState<string>("");
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [notes, setNotes] = useState<Note[]>([]);
+  const [currentPage, setCurrentPage] = useState(1); // Track the current page
+  const [hasMoreNotes, setHasMoreNotes] = useState(true); // Track if more notes are available
   const [isLoadingNotes, setIsLoadingNotes] = useState<boolean>(false);
   const [editingNote, setEditingNote] = useState<Note | null>(null); // Track which note is being edited
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState<boolean>(false); // State for delete confirmation dialog
@@ -87,27 +89,42 @@ const Page = () => {
   // Fetch notes when isUserId changes
   useEffect(() => {
     if (isUserId) {
-      fetchNotes();
+    fetchNotes(currentPage); // Fetch initial notes when the component mounts
     }
-  }, [isUserId]);
+  }, [isUserId]); // Re-fetch notes if isUserId changes
 
-  const fetchNotes = async () => {
+  const fetchNotes = async (page: any) => {
+    if (!isUserId) {
+      console.error("User ID is missing");
+      return; // Exit the function if isUserId is not set
+    }
     setIsLoadingNotes(true);
     try {
       const response = await fetch(
-        `http://localhost:4000/api/fetchNote/notes/${isUserId}`
+        `http://localhost:4000/api/fetchNote/notes/${isUserId}?page=${page}&limit=2`
       );
       if (!response.ok) {
         throw new Error("Failed to fetch notes");
       }
       const data = await response.json();
-      setNotes(data);
+      if (data.length > 0) {
+        setNotes((prevNotes) => [...prevNotes, ...data]); // Append new notes to the existing list
+        setHasMoreNotes(data.length === 2); // Check if there are more notes to fetch
+      } else {
+        setHasMoreNotes(false); // No more notes to fetch
+      }
     } catch (error) {
       console.error("Error fetching notes:", error);
       alert("Failed to fetch notes. Please try again.");
     } finally {
       setIsLoadingNotes(false);
     }
+  };
+
+  const handleLoadMore = () => {
+    const nextPage = currentPage + 1;
+    setCurrentPage(nextPage);
+    fetchNotes(nextPage); // Fetch the next batch of notes
   };
 
   const handleCreateNoteClick = () => {
@@ -150,7 +167,7 @@ const Page = () => {
       setNoteToDelete(null);
 
       // Refetch notes after deletion
-      fetchNotes();
+      fetchNotes(currentPage);
     } catch (error) {
       console.error("Error deleting note:", error);
       alert("Failed to delete note. Please try again.");
@@ -189,7 +206,7 @@ const Page = () => {
       setNoteContent("");
       setEditingNote(null);
       // Refetch notes after adding a new note
-      fetchNotes();
+      fetchNotes(currentPage);
     } catch (error) {
       console.error("Error submitting note:", error);
       alert("Failed to submit note. Please try again.");
@@ -233,7 +250,7 @@ const Page = () => {
       setNoteContent("");
       setEditingNote(null);
       // Refetch notes after updating a note
-      fetchNotes();
+      fetchNotes(currentPage);
     } catch (error) {
       console.error("Error updating note:", error);
       alert("Failed to update note. Please try again.");
@@ -266,7 +283,7 @@ const Page = () => {
 
           {/* Display fetched notes in a responsive grid */}
           <div className="flex flex-wrap gap-4">
-            {isLoadingNotes ? (
+            {isLoadingNotes && currentPage === 1 ? (
               <p>Loading notes...</p>
             ) : notes.length > 0 ? (
               notes.map((note) => (
@@ -308,6 +325,18 @@ const Page = () => {
               <p>No notes found.</p>
             )}
           </div>
+          {hasMoreNotes && (
+            <div className="flex justify-center mt-4">
+              <button
+                onClick={handleLoadMore}
+                className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 cursor-pointer"
+                disabled={isLoadingNotes}
+              >
+                {isLoadingNotes ? "Loading..." : "Load More"}
+              </button>
+            </div>
+          )}
+        
         </>
       ) : (
         <p>Loading...</p>
