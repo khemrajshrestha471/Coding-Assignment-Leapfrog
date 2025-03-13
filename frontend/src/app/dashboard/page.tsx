@@ -18,6 +18,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Edit, Trash } from "lucide-react"; // Import the edit and trash icons
 
 import NotesSortButton from "@/components/SortNotes";
+import SearchNotes from "@/components/SearchNotes";
 
 interface Note {
   id: number;
@@ -44,8 +45,11 @@ const Page = () => {
   const [editingNote, setEditingNote] = useState<Note | null>(null); // Track which note is being edited
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState<boolean>(false); // State for delete confirmation dialog
   const [noteToDelete, setNoteToDelete] = useState<number | null>(null); // Track which note is being deleted
-  const [totalNotesDatabase, setTotalNotesDatabase] = useState<number | null>(null); // Track
+  const [totalNotesDatabase, setTotalNotesDatabase] = useState<number | null>(
+    null
+  ); // Track
   const [sortBy, setSortBy] = useState("created_at"); // Default sort by creation date
+  const [isSearching, setIsSearching] = useState(false); // State for search loading
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -120,8 +124,7 @@ const Page = () => {
           setHasMoreNotes(updatedNotes.length < totalNotes);
           return updatedNotes;
         });
-      } 
-      else {
+      } else {
         setHasMoreNotes(false); // No more notes to fetch
       }
     } catch (error) {
@@ -130,6 +133,33 @@ const Page = () => {
     } finally {
       setIsLoadingNotes(false);
     }
+  };
+
+  // Handle search
+  const handleSearch = async (query: string) => {
+    setIsSearching(true);
+    try {
+      const response = await fetch(
+        `http://localhost:4000/api/searchNote/search-notes/${isUserId}?query=${encodeURIComponent(
+          query
+        )}`
+      );
+      if (!response.ok) {
+        throw new Error("Failed to search notes");
+      }
+      const data = await response.json();
+      setNotes(data); // Update notes with search results
+    } catch (error) {
+      console.error("Error searching notes:", error);
+      alert("Failed to search notes. Please try again.");
+    } finally {
+      setIsSearching(false);
+    }
+  };
+
+  const handleReset = async () => {
+    setNotes([]); // Clear the notes state before fetching
+    await fetchNotes(currentPage); // Fetch all notes
   };
 
   const handleSortChange = (newSortBy: string) => {
@@ -318,7 +348,13 @@ const Page = () => {
             </Button>
           </div>
 
-          <div className="flex justify-end mb-4">
+          <div className="flex justify-end mb-4 gap-2">
+            <SearchNotes
+              userId={isUserId}
+              onSearch={handleSearch}
+              onReset={handleReset}
+              isSearching={isSearching}
+            />
             <NotesSortButton onSortChange={handleSortChange} />
           </div>
           {/* Display fetched notes in a responsive grid */}
@@ -327,42 +363,43 @@ const Page = () => {
               <p>Loading notes...</p>
             ) : notes.length > 0 ? (
               <>
-              {/* {console.log("Number of notes displayed:", notes.length)} */}
-              {notes.map((note, index) => (
-                <Card
-                  key={`${note.id}-${index}`} // Combine ID and index for uniqueness
-                  className="flex-1 min-w-[250px] max-w-[350px] relative"
-                >
-                  <CardHeader>
-                    <CardTitle>{note.title}</CardTitle>
-                    <div className="absolute top-2 right-2 flex gap-2">
-                      <button
-                        onClick={() => handleEditNoteClick(note)}
-                        className="p-1 hover:bg-gray-100 rounded"
-                      >
-                        <Edit className="h-4 w-4" />
-                      </button>
-                      <button
-                        onClick={() => handleDeleteNoteClick(note.id)}
-                        className="p-1 hover:bg-gray-100 rounded text-red-600"
-                      >
-                        <Trash className="h-4 w-4" />
-                      </button>
-                    </div>
-                  </CardHeader>
-                  <CardContent>
-                    <p>{note.content}</p>
-                    <p className="text-sm text-gray-500 mt-2">
-                      Created at: {new Date(note.created_at).toLocaleString()}
-                    </p>
-                    {note.updated_at !== note.created_at && (
+                {/* {console.log("Number of notes displayed:", notes.length)} */}
+                {notes.map((note, index) => (
+                  <Card
+                    key={`${note.id}-${index}`} // Combine ID and index for uniqueness
+                    className="flex-1 min-w-[250px] max-w-[350px] relative"
+                  >
+                    <CardHeader>
+                      <CardTitle>{note.title}</CardTitle>
+                      <div className="absolute top-2 right-2 flex gap-2">
+                        <button
+                          onClick={() => handleEditNoteClick(note)}
+                          className="p-1 hover:bg-gray-100 rounded"
+                        >
+                          <Edit className="h-4 w-4" />
+                        </button>
+                        <button
+                          onClick={() => handleDeleteNoteClick(note.id)}
+                          className="p-1 hover:bg-gray-100 rounded text-red-600"
+                        >
+                          <Trash className="h-4 w-4" />
+                        </button>
+                      </div>
+                    </CardHeader>
+                    <CardContent>
+                      <p>{note.content}</p>
                       <p className="text-sm text-gray-500 mt-2">
-                        Updated at: {new Date(note.updated_at).toLocaleString()}
+                        Created at: {new Date(note.created_at).toLocaleString()}
                       </p>
-                    )}
-                  </CardContent>
-                </Card>
-              ))}
+                      {note.updated_at !== note.created_at && (
+                        <p className="text-sm text-gray-500 mt-2">
+                          Updated at:{" "}
+                          {new Date(note.updated_at).toLocaleString()}
+                        </p>
+                      )}
+                    </CardContent>
+                  </Card>
+                ))}
               </>
             ) : (
               <p>No notes found.</p>
