@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useState, useEffect } from "react";
 import { decodeToken } from "@/components/utils/decodeToken";
 import { useRouter } from "next/navigation";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -125,13 +126,18 @@ export default function Navbar() {
             </Link>
           ) : (
             <>
-              <Link href={`/dashboard?username=${storeUsername}&Id=${isUserId}`}>
-                <Button
-                  variant="ghost"
-                  className="text-blue-600 hover:text-blue-700 cursor-pointer"
-                >
-                  {storeUsername}
-                </Button>
+              <Link
+                href={`/dashboard?username=${storeUsername}&Id=${isUserId}`}
+              >
+                <Avatar>
+                  <AvatarFallback>
+                    {storeUsername
+                      ? storeUsername
+                          .slice(0, 2) // Extract first 2 characters
+                          .toUpperCase()
+                      : "XX"}
+                  </AvatarFallback>
+                </Avatar>
               </Link>
               <Button
                 className="bg-red-600 hover:bg-red-700 text-white cursor-pointer"
@@ -190,7 +196,9 @@ export default function Navbar() {
             </Link>
           ) : (
             <>
-              <Link href={`/dashboard?username=${storeUsername}&Id=${isUserId}`}>
+              <Link
+                href={`/dashboard?username=${storeUsername}&Id=${isUserId}`}
+              >
                 <Button
                   variant="ghost"
                   className="text-blue-600 hover:text-blue-700 cursor-pointer"

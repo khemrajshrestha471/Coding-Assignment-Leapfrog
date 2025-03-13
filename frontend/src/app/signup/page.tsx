@@ -25,6 +25,12 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog";
+import {
+  InputOTP,
+  InputOTPGroup,
+  InputOTPSeparator,
+  InputOTPSlot,
+} from "@/components/ui/input-otp";
 
 // Define the schema for form validation using Zod
 const signupSchema = z
@@ -235,6 +241,10 @@ export default function SignupPage() {
     }
   };
 
+  const handleOtpChange = (value: string) => {
+    setOtp(value);
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-gray-50 to-gray-100 overflow-hidden absolute inset-0">
       <Card className="w-full max-w-md mt-15">
@@ -374,12 +384,20 @@ export default function SignupPage() {
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4">
-            <Input
-              type="text"
-              placeholder="Enter OTP"
-              value={otp}
-              onChange={(e) => setOtp(e.target.value)}
-            />
+            <InputOTP maxLength={6} value={otp}
+              onChange={handleOtpChange}>
+              <InputOTPGroup>
+                <InputOTPSlot index={0} />
+                <InputOTPSlot index={1} />
+                <InputOTPSlot index={2} />
+              </InputOTPGroup>
+              <InputOTPSeparator />
+              <InputOTPGroup>
+                <InputOTPSlot index={3} />
+                <InputOTPSlot index={4} />
+                <InputOTPSlot index={5} />
+              </InputOTPGroup>
+            </InputOTP>
             <Button
               onClick={handleOtpVerification}
               className="w-full bg-blue-600 hover:bg-blue-700 cursor-pointer"

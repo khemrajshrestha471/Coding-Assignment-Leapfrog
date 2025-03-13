@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { sonner } from '@/components/ui/sonner';
 import {
   Dialog,
   DialogContent,
@@ -87,8 +88,10 @@ const Page = () => {
             );
           }
         }
-      } catch (error) {
-        console.error("Error decoding token:", error);
+      } catch (error:any) {
+        sonner.error(<span className="text-red-500">Error decoding token.</span>, {
+          description: <span className="text-red-500">{error}</span>,
+      });
         router.push("/login");
       }
     }
@@ -110,7 +113,7 @@ const Page = () => {
 
   const fetchNotes = async (page: any) => {
     if (!isUserId) {
-      console.error("User ID is missing");
+      sonner.error(<span className="text-red-500">User ID is missing.</span>);
       return; // Exit the function if isUserId is not set
     }
     setIsLoadingNotes(true);
@@ -132,9 +135,10 @@ const Page = () => {
         });
         setTotalPages(Math.ceil(totalNotes / limit));
       }
-    } catch (error) {
-      console.error("Error fetching notes:", error);
-      alert("Failed to fetch notes. Please try again.");
+    } catch (error:any) {
+      sonner.error(<span className="text-red-500">Error fetching notes.</span>, {
+              description: <span className="text-red-500">{error}</span>,
+          });
     } finally {
       setIsLoadingNotes(false);
     }
@@ -168,9 +172,10 @@ const Page = () => {
         }
         //handle your search result here.
     }, 1000);
-    } catch (error) {
-      console.error("Error searching notes:", error);
-      alert("Failed to search notes. Please try again.");
+    } catch (error:any) {
+      sonner.error(<span className="text-red-500">Error searching notes.</span>, {
+        description: <span className="text-red-500">{error}</span>,
+    });
     } finally {
       setIsSearching(false);
     }
@@ -191,7 +196,7 @@ const Page = () => {
 
   const fetchSortedNotes = async (sortBy: string) => {
     if (!isUserId) {
-      console.error("User ID is missing");
+      sonner.error(<span className="text-red-500">User ID is missing.</span>);
       return; // Exit the function if isUserId is not set
     }
     try {
@@ -203,9 +208,10 @@ const Page = () => {
       }
       const data = await response.json();
       setNotes(data);
-    } catch (error) {
-      console.error("Error fetching notes:", error);
-      alert("Failed to fetch notes. Please try again111.");
+    } catch (error:any) {
+      sonner.error(<span className="text-red-500">Error fetching notes.</span>, {
+        description: <span className="text-red-500">{error}</span>,
+    });
     }
   };
 
@@ -240,9 +246,7 @@ const Page = () => {
       if (!response.ok) {
         throw new Error("Failed to delete note");
       }
-
-      const data = await response.json();
-      console.log("Note deleted successfully:", data);
+      window.location.reload();
 
       // Close the delete confirmation dialog
       setIsDeleteDialogOpen(false);
@@ -250,9 +254,10 @@ const Page = () => {
 
       // Refetch notes after deletion
       fetchNotes(currentPage);
-    } catch (error) {
-      console.error("Error deleting note:", error);
-      alert("Failed to delete note. Please try again.");
+    } catch (error:any) {
+      sonner.error(<span className="text-red-500">Error deleting note.</span>, {
+        description: <span className="text-red-500">{error}</span>,
+    });
     }
   };
 
@@ -278,9 +283,7 @@ const Page = () => {
       if (!response.ok) {
         throw new Error("Failed to submit note");
       }
-
-      const data = await response.json();
-      console.log("Note submitted successfully:", data);
+      window.location.reload();
 
       // Reset form and close modal
       setIsModalOpen(false);
@@ -289,9 +292,10 @@ const Page = () => {
       setEditingNote(null);
       // Refetch notes after adding a new note
       fetchNotes(currentPage);
-    } catch (error) {
-      console.error("Error submitting note:", error);
-      alert("Failed to submit note. Please try again.");
+    } catch (error:any) {
+      sonner.error(<span className="text-red-500">Error submitting note.</span>, {
+        description: <span className="text-red-500">{error}</span>,
+    });
     } finally {
       setIsSubmitting(false);
     }
@@ -323,8 +327,7 @@ const Page = () => {
         throw new Error("Failed to update note");
       }
 
-      const data = await response.json();
-      console.log("Note updated successfully:", data);
+      window.location.reload();
 
       // Reset form and close modal
       setIsModalOpen(false);
@@ -333,9 +336,10 @@ const Page = () => {
       setEditingNote(null);
       // Refetch notes after updating a note
       fetchNotes(currentPage);
-    } catch (error) {
-      console.error("Error updating note:", error);
-      alert("Failed to update note. Please try again.");
+    } catch (error:any) {
+      sonner.error(<span className="text-red-500">Error updating note.</span>, {
+        description: <span className="text-red-500">{error}</span>,
+    });
     } finally {
       setIsSubmitting(false);
     }
@@ -392,7 +396,6 @@ const Page = () => {
               <p>Loading notes...</p>
             ) : notes.length > 0 ? (
               <>
-                {/* {console.log("Number of notes displayed:", notes.length)} */}
                 {notes.map((note, index) => (
                   <Card
                     key={`${note.id}-${index}`} // Combine ID and index for uniqueness
