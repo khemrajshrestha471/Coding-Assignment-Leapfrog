@@ -11,6 +11,7 @@ const updateNotes = require('./api/updateNote'); // Import the update
 const deleteNotes = require('./api/deleteNote'); // Import the delete
 const sortNotes = require('./api/sortNote'); // Import the sort
 const searchNotes = require('./api/searchNote'); // Import the search
+const handleOtps = require('./api/handleOtp'); // Import the send
 
 dotenv.config();
 
@@ -39,6 +40,7 @@ app.use('/api/updateNote', updateNotes);
 app.use('/api/deleteNote', deleteNotes);
 app.use('/api/sortNote', sortNotes);
 app.use('/api/searchNote', searchNotes);
+app.use('/api/handleOtp', handleOtps);
 
 app.listen(process.env.PORT || 5000, () => {
     console.log("Server listening on port " + process.env.PORT || 5000)
