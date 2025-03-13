@@ -38,7 +38,7 @@ const SearchNotes: React.FC<SearchNotesProps> = ({
       {/* Search Input */}
       <Input
         type="text"
-        placeholder="Search by title or content..."
+        placeholder="Search Here..."
         value={searchQuery}
         onChange={(e) => setSearchQuery(e.target.value)}
         className="flex-1"

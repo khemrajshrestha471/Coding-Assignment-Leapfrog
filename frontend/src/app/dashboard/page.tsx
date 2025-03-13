@@ -335,28 +335,42 @@ const Page = () => {
     <div className="p-6">
       {storeUsername ? (
         <>
-          <div className="headerContent flex justify-between items-center">
-            <h1 className="text-2xl font-bold mb-4">
+          <div className="headerContent flex flex-col sm:flex-row justify-between items-center mb-4">
+            <h1 className="text-lg sm:text-2xl font-bold mb-4 sm:mb-0">
               Welcome back,
-              <span className="text-blue-600">{storeUsername}</span>
+              <span className="text-blue-600"> {storeUsername}</span>
             </h1>
-            <Button
-              onClick={handleCreateNoteClick}
-              className="cursor-pointer mb-6 bg-blue-600 hover:bg-blue-700"
-            >
-              Create Note
-            </Button>
+            <div className="flex gap-2">
+              <Button
+                onClick={handleCreateNoteClick}
+                className="cursor-pointer bg-blue-600 hover:bg-blue-700"
+              >
+                Create Note
+              </Button>
+              <div className="sm:hidden">
+                <NotesSortButton onSortChange={handleSortChange} />
+              </div>
+            </div>
           </div>
 
-          <div className="flex justify-end mb-4 gap-2">
-            <SearchNotes
-              userId={isUserId}
-              onSearch={handleSearch}
-              onReset={handleReset}
-              isSearching={isSearching}
-            />
-            <NotesSortButton onSortChange={handleSortChange} />
+          {/* Search and Sort Section */}
+          <div className="flex flex-col sm:flex-row justify-between mb-4 gap-2">
+            {/* Sort Button - Hidden on small screens (already in header) */}
+            <div className="hidden sm:block w-full sm:w-auto">
+              <NotesSortButton onSortChange={handleSortChange} />
+            </div>
+
+            {/* Search Notes - Visible on all screens */}
+            <div className="w-full sm:w-auto">
+              <SearchNotes
+                userId={isUserId}
+                onSearch={handleSearch}
+                onReset={handleReset}
+                isSearching={isSearching}
+              />
+            </div>
           </div>
+
           {/* Display fetched notes in a responsive grid */}
           <div className="flex flex-wrap gap-4">
             {isLoadingNotes && currentPage === 1 ? (
