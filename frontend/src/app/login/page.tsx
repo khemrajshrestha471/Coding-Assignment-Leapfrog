@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { IoMdEye, IoMdEyeOff } from "react-icons/io";
 import { sonner } from "@/components/ui/sonner";
+import Footer from "@/components/Footer";
 import {
   InputOTP,
   InputOTPGroup,
@@ -415,7 +416,6 @@ export default function LoginPage() {
               )}
             </div>
 
-            {/* Submit Button */}
             <Button
               type="submit"
               className="w-full bg-blue-600 hover:bg-blue-700 cursor-pointer"
@@ -648,6 +648,9 @@ export default function LoginPage() {
           </form>
         </DialogContent>
       </Dialog>
+      <div className="fixed bottom-0 left-0 w-full">
+        <Footer />
+      </div>
     </div>
   );
 }
