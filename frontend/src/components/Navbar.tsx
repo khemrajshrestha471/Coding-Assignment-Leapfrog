@@ -134,7 +134,7 @@ export default function Navbar() {
                 isSticky ? "text-lg" : "text-xl" // Reduce text size when sticky
               }`}
             >
-              NoteSwift
+              NoteX
             </span>
           </Link>
         </div>
@@ -224,7 +224,7 @@ export default function Navbar() {
       {/* Mobile Navigation Links with Transition */}
       <div
         className={`md:hidden bg-white overflow-hidden transition-all duration-300 ${
-          isMenuOpen ? "max-h-96 border-t border-gray-200" : "max-h-0" // Add border only when menu is open
+          isMenuOpen ? "max-h-96 border-t border-gray-200" : "max-h-0"
         }`}
       >
         <div className="flex flex-col space-y-2 px-6 py-4">
