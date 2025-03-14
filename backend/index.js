@@ -15,6 +15,8 @@ const handleOtps = require('./api/handleOtp'); // Import the send
 const checkExistences = require('./api/checkExistence'); // Import the
 const checkUserEmailPhones = require('./api/checkUserEmailPhone'); // Import
 const updatePasswords = require('./api/updatePassword'); // Import the update
+const fetchUserProfiles = require('./api/fetchUserProfile'); // Import
+const updateUsernames = require('./api/updateUsername');
 
 dotenv.config();
 
@@ -47,6 +49,8 @@ app.use('/api/handleOtp', handleOtps);
 app.use('/api/checkExistence', checkExistences);
 app.use('/api/checkUserEmailPhone', checkUserEmailPhones);
 app.use('/api/updatePassword', updatePasswords);
+app.use('/api/fetchUserProfile', fetchUserProfiles);
+app.use('/api/updateUsername', updateUsernames);
 
 app.listen(process.env.PORT || 5000, () => {
     console.log("Server listening on port " + process.env.PORT || 5000)

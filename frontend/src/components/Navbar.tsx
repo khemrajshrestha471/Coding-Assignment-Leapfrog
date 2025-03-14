@@ -6,7 +6,15 @@ import Link from "next/link";
 import { useState, useEffect } from "react";
 import { decodeToken } from "@/components/utils/decodeToken";
 import { useRouter } from "next/navigation";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { sonner } from "@/components/ui/sonner";
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+} from "@/components/ui/dropdown-menu";
+import { User, LayoutDashboard } from "lucide-react";
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -15,6 +23,8 @@ export default function Navbar() {
   const [showGetStarted, setShowGetStarted] = useState(true);
   const [storeUsername, setStoreUsername] = useState("");
   const [isUserId, setIsUserId] = useState("");
+  const [username, setUsername] = useState(""); // State to store the fetched username
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -29,8 +39,13 @@ export default function Navbar() {
           setExpiryTime(decodedToken.exp);
           setShowGetStarted(false);
         }
-      } catch (error) {
-        console.error("Error decoding token:", error);
+      } catch (error: any) {
+        sonner.error(
+          <span className="text-red-500">Error decoding token.</span>,
+          {
+            description: <span className="text-red-500">{error}</span>,
+          }
+        );
       }
     }
     // Token expiry check
@@ -68,6 +83,36 @@ export default function Navbar() {
     setShowGetStarted(true);
     router.push("/login");
   };
+
+  useEffect(() => {
+    // Fetch user details from the backend
+    const fetchUserProfile = async () => {
+      try {
+        if (!isUserId) {
+          return;
+        }
+        const response = await fetch(
+          `http://localhost:4000/api/fetchUserProfile/fetch-users/${isUserId}`
+        );
+        if (!response.ok) {
+          sonner.error(
+            <span className="text-red-500">Failed to fetch user profile.</span>
+          );
+        }
+        const data = await response.json();
+        setUsername(data.user.username); // Set the fetched username
+      } catch (error: any) {
+        sonner.error(
+          <span className="text-red-500">Something went wrong.</span>,
+          {
+            description: <span className="text-red-500">{error.message}</span>,
+          }
+        );
+      }
+    };
+
+    fetchUserProfile();
+  }, [isUserId]);
 
   return (
     <nav
@@ -126,19 +171,37 @@ export default function Navbar() {
             </Link>
           ) : (
             <>
-              <Link
-                href={`/dashboard?username=${storeUsername}&Id=${isUserId}`}
-              >
-                <Avatar>
-                  <AvatarFallback>
-                    {storeUsername
-                      ? storeUsername
-                          .slice(0, 2) // Extract first 2 characters
-                          .toUpperCase()
-                      : "XX"}
-                  </AvatarFallback>
-                </Avatar>
-              </Link>
+              <DropdownMenu onOpenChange={setIsDropdownOpen}>
+                <DropdownMenuTrigger asChild>
+                  <Avatar className="cursor-pointer">
+                    <AvatarFallback>
+                      {username ? username.slice(0, 2).toUpperCase() : "XX"}
+                    </AvatarFallback>
+                  </Avatar>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-40">
+                  <DropdownMenuItem asChild>
+                    <Link
+                      href={`/dashboard?username=${username}&Id=${isUserId}`}
+                      className="flex items-center w-full"
+                      onClick={() => setIsDropdownOpen(false)}
+                    >
+                      <LayoutDashboard className="mr-2 h-4 w-4" />
+                      <span>Dashboard</span>
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link
+                      href={`/profile?username=${username}&Id=${isUserId}`}
+                      className="flex items-center w-full"
+                      onClick={() => setIsDropdownOpen(false)}
+                    >
+                      <User className="mr-2 h-4 w-4" />
+                      <span>Profile</span>
+                    </Link>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
               <Button
                 className="bg-red-600 hover:bg-red-700 text-white cursor-pointer"
                 onClick={LogOut}
@@ -196,16 +259,36 @@ export default function Navbar() {
             </Link>
           ) : (
             <>
-              <Link
-                href={`/dashboard?username=${storeUsername}&Id=${isUserId}`}
-              >
-                <Button
-                  variant="ghost"
-                  className="text-blue-600 hover:text-blue-700 cursor-pointer"
-                >
-                  {storeUsername}
-                </Button>
-              </Link>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    className="text-blue-600 hover:text-blue-700 cursor-pointer"
+                  >
+                    {username}
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-40">
+                  <DropdownMenuItem>
+                    <Link
+                      href={`/dashboard?username=${username}&Id=${isUserId}`}
+                      className="flex items-center w-full"
+                    >
+                      <LayoutDashboard className="mr-2 h-4 w-4" />
+                      <span>Dashboard</span>
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem>
+                    <Link
+                      href={`/profile?username=${username}&Id=${isUserId}`}
+                      className="flex items-center w-full"
+                    >
+                      <User className="mr-2 h-4 w-4" />
+                      <span>Profile</span>
+                    </Link>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
               <Button
                 className="w-full justify-start bg-red-600 hover:bg-red-700 text-white cursor-pointer"
                 onClick={LogOut}

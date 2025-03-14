@@ -58,6 +58,7 @@ const Page = () => {
   const [showPaginationOnSearch, setShowPaginationOnSearch] = useState(true);
   const [sortBy, setSortBy] = useState("created_at"); // Default sort by creation date
   const [isSearching, setIsSearching] = useState(false); // State for search loading
+  const [username, setUsername] = useState(""); // State to store the fetched username
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -123,7 +124,7 @@ const Page = () => {
         `http://localhost:4000/api/fetchNote/notes/${isUserId}?page=${page}&limit=${limit}`
       );
       if (!response.ok) {
-        throw new Error("Failed to fetch notes");
+        sonner.error(<span className="text-red-500">Failed to fetching notes.</span>);
       }
       const { notes: newNotes = [], totalNotes = 0 } = await response.json();
       setTotalNotesDatabase(totalNotes);
@@ -159,7 +160,7 @@ const Page = () => {
         )}`
       );
       if (!response.ok) {
-        throw new Error("Failed to search notes");
+        sonner.error(<span className="text-red-500">Failed to fetching notes.</span>);
       }
       const data = await response.json();
       setNotes(data); // Update notes with search results
@@ -204,7 +205,7 @@ const Page = () => {
         `http://localhost:4000/api/sortNote/sort-notes/${isUserId}?sortBy=${sortBy}`
       );
       if (!response.ok) {
-        throw new Error("Failed to fetch notes");
+        sonner.error(<span className="text-red-500">Failed to fetching notes.</span>);
       }
       const data = await response.json();
       setNotes(data);
@@ -244,7 +245,7 @@ const Page = () => {
       );
 
       if (!response.ok) {
-        throw new Error("Failed to delete note");
+        sonner.error(<span className="text-red-500">Failed to delete note.</span>);
       }
       window.location.reload();
 
@@ -281,7 +282,7 @@ const Page = () => {
       );
 
       if (!response.ok) {
-        throw new Error("Failed to submit note");
+        sonner.error(<span className="text-red-500">Failed to submit note.</span>);
       }
       window.location.reload();
 
@@ -306,11 +307,11 @@ const Page = () => {
     setIsSubmitting(true);
     try {
       if (!editingNote) {
-        throw new Error("No note is being edited");
+        return sonner.error(<span className="text-red-500">No note is being edited.</span>);
       }
 
       const response = await fetch(
-        `http://localhost:4000/api/updateNote/update-note/${isUserId}/${editingNote.id}`,
+        `http://localhost:4000/api/updateNote/update-note/${isUserId}/${editingNote?.id}`,
         {
           method: "PUT",
           headers: {
@@ -324,7 +325,7 @@ const Page = () => {
       );
 
       if (!response.ok) {
-        throw new Error("Failed to update note");
+        sonner.error(<span className="text-red-500">Failed to update note.</span>);
       }
 
       window.location.reload();
@@ -350,6 +351,31 @@ const Page = () => {
     setNoteContent("");
   };
 
+  useEffect(() => {
+    // Fetch user details from the backend
+    const fetchUserProfile = async () => {
+      try {
+        if (!isUserId) {
+          return;
+        }
+        const response = await fetch(
+          `http://localhost:4000/api/fetchUserProfile/fetch-users/${isUserId}`
+        );
+        if (!response.ok) {
+          sonner.error(<span className="text-red-500">Failed to fetch user profile.</span>);
+        }
+        const data = await response.json();
+        setUsername(data.user.username); // Set the fetched username
+      } catch (error:any) {
+        sonner.error(<span className="text-red-500">Something went wrong.</span>, {
+          description: <span className="text-red-500">{error.message}</span>,
+      });
+      }
+    };
+
+    fetchUserProfile();
+  }, [isUserId]);
+
   return (
     <div className="p-6">
       {storeUsername ? (
@@ -357,7 +383,7 @@ const Page = () => {
           <div className="headerContent flex flex-col sm:flex-row justify-between items-center mb-4">
             <h1 className="text-lg sm:text-2xl font-bold mb-4 sm:mb-0">
               Welcome back,
-              <span className="text-blue-600"> {storeUsername}</span>
+              <span className="text-blue-600"> {username}</span>
             </h1>
             <div className="flex gap-2">
               <Button
@@ -453,11 +479,11 @@ const Page = () => {
                 <PaginationItem>
                   <PaginationNext
                     onClick={() => handlePageChange(currentPage + 1)}
-                    className={
+                    className={`cursor-pointer ${
                       currentPage === totalPages || isLoadingNotes
                         ? "pointer-events-none opacity-50"
                         : ""
-                    }
+                    }`}
                   />
                 </PaginationItem>
               </PaginationContent>

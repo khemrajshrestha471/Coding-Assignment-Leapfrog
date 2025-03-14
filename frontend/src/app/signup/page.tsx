@@ -246,8 +246,8 @@ export default function SignupPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-gray-50 to-gray-100 overflow-hidden absolute inset-0">
-      <Card className="w-full max-w-md mt-15">
+    <div className="flex items-center justify-center bg-gradient-to-b from-gray-50 to-gray-100 inset-0">
+      <Card className="w-full max-w-md mt-7 mb-7">
         <CardHeader>
           <CardTitle className="text-2xl font-bold text-center">
             Sign Up
@@ -384,8 +384,7 @@ export default function SignupPage() {
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4">
-            <InputOTP maxLength={6} value={otp}
-              onChange={handleOtpChange}>
+            <InputOTP maxLength={6} value={otp} onChange={handleOtpChange}>
               <InputOTPGroup>
                 <InputOTPSlot index={0} />
                 <InputOTPSlot index={1} />
