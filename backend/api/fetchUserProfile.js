@@ -15,7 +15,7 @@ router.get("/fetch-users/:user_id", async (req, res) => {
 
     // Fetch user details from PostgreSQL
     const result = await pool.query(
-      `SELECT username, email, phone, created_at FROM Users WHERE id = $1`,
+      `SELECT username, email, phone, password, created_at FROM Users WHERE id = $1`,
       [user_id]
     );
 
