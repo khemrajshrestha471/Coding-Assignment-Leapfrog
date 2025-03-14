@@ -80,6 +80,7 @@ export default function Navbar() {
 
   const LogOut = () => {
     localStorage.removeItem("token");
+    localStorage.removeItem("hasRefreshed");
     setShowGetStarted(true);
     router.push("/login");
   };

@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { sonner } from '@/components/ui/sonner';
+import { sonner } from "@/components/ui/sonner";
 import {
   Dialog,
   DialogContent,
@@ -89,10 +89,13 @@ const Page = () => {
             );
           }
         }
-      } catch (error:any) {
-        sonner.error(<span className="text-red-500">Error decoding token.</span>, {
-          description: <span className="text-red-500">{error}</span>,
-      });
+      } catch (error: any) {
+        sonner.error(
+          <span className="text-red-500">Error decoding token.</span>,
+          {
+            description: <span className="text-red-500">{error}</span>,
+          }
+        );
         router.push("/login");
       }
     }
@@ -104,6 +107,17 @@ const Page = () => {
       }
     }
   }, [router, isUserId]);
+
+  useEffect(() => {
+    // Check if the page has already been refreshed
+    const hasRefreshed = localStorage.getItem("hasRefreshed");
+
+    if (!hasRefreshed) {
+      // Set the flag in localStorage to indicate the page has been refreshed
+      localStorage.setItem("hasRefreshed", "true");
+      window.location.reload();
+    }
+  }, []); // Empty dependency array ensures this runs only once on mount
 
   // Fetch notes when isUserId changes
   useEffect(() => {
@@ -124,7 +138,9 @@ const Page = () => {
         `http://localhost:4000/api/fetchNote/notes/${isUserId}?page=${page}&limit=${limit}`
       );
       if (!response.ok) {
-        sonner.error(<span className="text-red-500">Failed to fetching notes.</span>);
+        sonner.error(
+          <span className="text-red-500">Failed to fetching notes.</span>
+        );
       }
       const { notes: newNotes = [], totalNotes = 0 } = await response.json();
       setTotalNotesDatabase(totalNotes);
@@ -136,10 +152,13 @@ const Page = () => {
         });
         setTotalPages(Math.ceil(totalNotes / limit));
       }
-    } catch (error:any) {
-      sonner.error(<span className="text-red-500">Error fetching notes.</span>, {
-              description: <span className="text-red-500">{error}</span>,
-          });
+    } catch (error: any) {
+      sonner.error(
+        <span className="text-red-500">Error fetching notes.</span>,
+        {
+          description: <span className="text-red-500">{error}</span>,
+        }
+      );
     } finally {
       setIsLoadingNotes(false);
     }
@@ -160,23 +179,28 @@ const Page = () => {
         )}`
       );
       if (!response.ok) {
-        sonner.error(<span className="text-red-500">Failed to fetching notes.</span>);
+        sonner.error(
+          <span className="text-red-500">Failed to fetching notes.</span>
+        );
       }
       const data = await response.json();
       setNotes(data); // Update notes with search results
       setTimeout(() => {
         setIsSearching(false);
-        if(isFromSearch){
-            setShowPaginationOnSearch(false);
-        } else{
-            setShowPaginationOnSearch(true);
+        if (isFromSearch) {
+          setShowPaginationOnSearch(false);
+        } else {
+          setShowPaginationOnSearch(true);
         }
         //handle your search result here.
-    }, 1000);
-    } catch (error:any) {
-      sonner.error(<span className="text-red-500">Error searching notes.</span>, {
-        description: <span className="text-red-500">{error}</span>,
-    });
+      }, 1000);
+    } catch (error: any) {
+      sonner.error(
+        <span className="text-red-500">Error searching notes.</span>,
+        {
+          description: <span className="text-red-500">{error}</span>,
+        }
+      );
     } finally {
       setIsSearching(false);
     }
@@ -184,7 +208,7 @@ const Page = () => {
 
   const handleReset = async () => {
     setNotes([]); // Clear the notes state before fetching
-    handlePageChange(1)
+    handlePageChange(1);
     await fetchNotes(currentPage); // Fetch all notes
     setShowPaginationOnSearch(true);
   };
@@ -205,14 +229,19 @@ const Page = () => {
         `http://localhost:4000/api/sortNote/sort-notes/${isUserId}?sortBy=${sortBy}`
       );
       if (!response.ok) {
-        sonner.error(<span className="text-red-500">Failed to fetching notes.</span>);
+        sonner.error(
+          <span className="text-red-500">Failed to fetching notes.</span>
+        );
       }
       const data = await response.json();
       setNotes(data);
-    } catch (error:any) {
-      sonner.error(<span className="text-red-500">Error fetching notes.</span>, {
-        description: <span className="text-red-500">{error}</span>,
-    });
+    } catch (error: any) {
+      sonner.error(
+        <span className="text-red-500">Error fetching notes.</span>,
+        {
+          description: <span className="text-red-500">{error}</span>,
+        }
+      );
     }
   };
 
@@ -245,7 +274,9 @@ const Page = () => {
       );
 
       if (!response.ok) {
-        sonner.error(<span className="text-red-500">Failed to delete note.</span>);
+        sonner.error(
+          <span className="text-red-500">Failed to delete note.</span>
+        );
       }
       window.location.reload();
 
@@ -255,10 +286,10 @@ const Page = () => {
 
       // Refetch notes after deletion
       fetchNotes(currentPage);
-    } catch (error:any) {
+    } catch (error: any) {
       sonner.error(<span className="text-red-500">Error deleting note.</span>, {
         description: <span className="text-red-500">{error}</span>,
-    });
+      });
     }
   };
 
@@ -282,7 +313,9 @@ const Page = () => {
       );
 
       if (!response.ok) {
-        sonner.error(<span className="text-red-500">Failed to submit note.</span>);
+        sonner.error(
+          <span className="text-red-500">Failed to submit note.</span>
+        );
       }
       window.location.reload();
 
@@ -293,10 +326,13 @@ const Page = () => {
       setEditingNote(null);
       // Refetch notes after adding a new note
       fetchNotes(currentPage);
-    } catch (error:any) {
-      sonner.error(<span className="text-red-500">Error submitting note.</span>, {
-        description: <span className="text-red-500">{error}</span>,
-    });
+    } catch (error: any) {
+      sonner.error(
+        <span className="text-red-500">Error submitting note.</span>,
+        {
+          description: <span className="text-red-500">{error}</span>,
+        }
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -307,7 +343,9 @@ const Page = () => {
     setIsSubmitting(true);
     try {
       if (!editingNote) {
-        return sonner.error(<span className="text-red-500">No note is being edited.</span>);
+        return sonner.error(
+          <span className="text-red-500">No note is being edited.</span>
+        );
       }
 
       const response = await fetch(
@@ -325,7 +363,9 @@ const Page = () => {
       );
 
       if (!response.ok) {
-        sonner.error(<span className="text-red-500">Failed to update note.</span>);
+        sonner.error(
+          <span className="text-red-500">Failed to update note.</span>
+        );
       }
 
       window.location.reload();
@@ -337,10 +377,10 @@ const Page = () => {
       setEditingNote(null);
       // Refetch notes after updating a note
       fetchNotes(currentPage);
-    } catch (error:any) {
+    } catch (error: any) {
       sonner.error(<span className="text-red-500">Error updating note.</span>, {
         description: <span className="text-red-500">{error}</span>,
-    });
+      });
     } finally {
       setIsSubmitting(false);
     }
@@ -362,14 +402,19 @@ const Page = () => {
           `http://localhost:4000/api/fetchUserProfile/fetch-users/${isUserId}`
         );
         if (!response.ok) {
-          sonner.error(<span className="text-red-500">Failed to fetch user profile.</span>);
+          sonner.error(
+            <span className="text-red-500">Failed to fetch user profile.</span>
+          );
         }
         const data = await response.json();
         setUsername(data.user.username); // Set the fetched username
-      } catch (error:any) {
-        sonner.error(<span className="text-red-500">Something went wrong.</span>, {
-          description: <span className="text-red-500">{error.message}</span>,
-      });
+      } catch (error: any) {
+        sonner.error(
+          <span className="text-red-500">Something went wrong.</span>,
+          {
+            description: <span className="text-red-500">{error.message}</span>,
+          }
+        );
       }
     };
 
@@ -464,31 +509,30 @@ const Page = () => {
             )}
           </div>
           {notes.length !== totalNotesDatabase && showPaginationOnSearch && (
-          <div className="flex justify-center mt-4">
-            <Pagination>
-              <PaginationContent>
+            <div className="flex justify-center mt-4">
+              <Pagination>
+                <PaginationContent>
+                  {/* Current Page Display */}
+                  <PaginationItem>
+                    <span className="px-4 py-2">
+                      Page {currentPage} of {totalPages}
+                    </span>
+                  </PaginationItem>
 
-                {/* Current Page Display */}
-                <PaginationItem>
-                  <span className="px-4 py-2">
-                    Page {currentPage} of {totalPages}
-                  </span>
-                </PaginationItem>
-
-                {/* Next Button */}
-                <PaginationItem>
-                  <PaginationNext
-                    onClick={() => handlePageChange(currentPage + 1)}
-                    className={`cursor-pointer ${
-                      currentPage === totalPages || isLoadingNotes
-                        ? "pointer-events-none opacity-50"
-                        : ""
-                    }`}
-                  />
-                </PaginationItem>
-              </PaginationContent>
-            </Pagination>
-          </div>
+                  {/* Next Button */}
+                  <PaginationItem>
+                    <PaginationNext
+                      onClick={() => handlePageChange(currentPage + 1)}
+                      className={`cursor-pointer ${
+                        currentPage === totalPages || isLoadingNotes
+                          ? "pointer-events-none opacity-50"
+                          : ""
+                      }`}
+                    />
+                  </PaginationItem>
+                </PaginationContent>
+              </Pagination>
+            </div>
           )}
         </>
       ) : (

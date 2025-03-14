@@ -158,7 +158,7 @@ const Page = () => {
   return (
     <div className="flex items-center justify-center mt-10">
       <div className="max-w-md w-full p-6 bg-white shadow-md rounded-lg">
-        <h1 className="text-2xl font-bold mb-6">User Details</h1>
+        <h1 className="text-2xl font-bold mb-6 text-center">User Details</h1>
         <div className="space-y-4">
           {/* Username Field */}
           <div>
