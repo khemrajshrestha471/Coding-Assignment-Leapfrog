@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input"; // Import Input component from sh
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { z } from "zod";
+import { IoMdEye, IoMdEyeOff } from "react-icons/io";
 import {
   Dialog,
   DialogContent,
@@ -46,6 +47,9 @@ const Page = () => {
   const [isUserId, setIsUserId] = useState<string>("");
   const router = useRouter();
   const [storeUsername, setStoreUsername] = useState<string>("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showNewConfirmPassword, setShowNewConfirmPassword] = useState(false);
   const [user, setUser] = useState({
     username: "",
     email: "",
@@ -280,6 +284,16 @@ const Page = () => {
     }
   };
 
+  const togglePasswordVisibility = () => {
+    setShowPassword((prevState: any) => !prevState);
+  };
+  const togglePasswordNewVisibility = () => {
+    setShowNewPassword((prevState: any) => !prevState);
+  };
+  const togglePasswordConfirmNewVisibility = () => {
+    setShowNewConfirmPassword((prevState: any) => !prevState);
+  };
+
   return (
     <div className="flex justify-center mt-10">
       <div className="max-w-md w-full p-6 bg-white shadow-md rounded-lg">
@@ -369,7 +383,7 @@ const Page = () => {
           </DialogHeader>
           <div className="space-y-4">
             {/* Old Password Field */}
-            <div>
+            {/* <div>
               <Label htmlFor="oldPassword" className="mb-2">Old Password</Label>
               <Input
                 id="oldPassword"
@@ -378,6 +392,25 @@ const Page = () => {
                 value={oldPassword}
                 onChange={(e) => setOldPassword(e.target.value)}
               />
+            </div> */}
+                        <div className="space-y-2">
+              <Label htmlFor="oldPassword" className="mb-2">Old Password</Label>
+              <div className="relative">
+                <Input
+                  id="oldPassword"
+                  type={showPassword ? "text" : "password"}
+                  placeholder="Enter your old password"
+                  value={oldPassword}
+                onChange={(e) => setOldPassword(e.target.value)}
+                />
+                <div
+                  className="absolute inset-y-0 right-3 flex items-center cursor-pointer"
+                  onClick={togglePasswordVisibility}
+                  data-testid="toggle-password-visibility"
+                >
+                  {showPassword ? <IoMdEyeOff /> : <IoMdEye />}
+                </div>
+              </div>
             </div>
 
             <DialogFooter>
@@ -419,7 +452,7 @@ const Page = () => {
             className="space-y-4"
           >
             {/* New Password Field */}
-            <div>
+            {/* <div>
               <Label htmlFor="newPassword" className="mb-2">New Password</Label>
               <Input
                 id="newPassword"
@@ -432,10 +465,33 @@ const Page = () => {
                   {errors.newPassword.message}
                 </p>
               )}
+            </div> */}
+                        <div className="space-y-2">
+              <Label htmlFor="newPassword">New Password</Label>
+              <div className="relative">
+                <Input
+                  id="newPassword"
+                  type={showNewPassword ? "text" : "password"}
+                  placeholder="Enter your new password"
+                  {...register("newPassword")}
+                />
+                <div
+                  className="absolute inset-y-0 right-3 flex items-center cursor-pointer"
+                  onClick={togglePasswordNewVisibility}
+                  data-testid="toggle-password-new-visibility"
+                >
+                  {showNewPassword ? <IoMdEyeOff /> : <IoMdEye />}
+                </div>
+              </div>
+              {errors.newPassword && (
+                <p className="text-sm text-red-500">
+                  {errors.newPassword.message}
+                </p>
+              )}
             </div>
 
             {/* Confirm Password Field */}
-            <div>
+            {/* <div>
               <Label htmlFor="confirmPassword" className="mb-2">Confirm Password</Label>
               <Input
                 id="confirmPassword"
@@ -443,6 +499,30 @@ const Page = () => {
                 placeholder="Confirm your new password"
                 {...register("confirmPassword")}
               />
+              {errors.confirmPassword && (
+                <p className="text-sm text-red-500">
+                  {errors.confirmPassword.message}
+                </p>
+              )}
+            </div> */}
+
+<div className="space-y-2">
+              <Label htmlFor="confirmPassword">Confirm Password</Label>
+              <div className="relative">
+                <Input
+                  id="confirmPassword"
+                  type={showNewConfirmPassword ? "text" : "password"}
+                  placeholder="Re-enter your new password"
+                  {...register("confirmPassword")}
+                />
+                <div
+                  className="absolute inset-y-0 right-3 flex items-center cursor-pointer"
+                  onClick={togglePasswordConfirmNewVisibility}
+                  data-testid="toggle-password-confirm-new-visibility"
+                >
+                  {showNewConfirmPassword ? <IoMdEyeOff /> : <IoMdEye />}
+                </div>
+              </div>
               {errors.confirmPassword && (
                 <p className="text-sm text-red-500">
                   {errors.confirmPassword.message}

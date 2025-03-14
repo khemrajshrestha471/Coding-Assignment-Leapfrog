@@ -91,6 +91,8 @@ type ResetPasswordFormData = z.infer<typeof resetPasswordSchema>;
 export default function LoginPage() {
   const router = useRouter(); // To navigate to dashboard after successful login
   const [showPassword, setShowPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showNewConfirmPassword, setShowNewConfirmPassword] = useState(false);
   const [isForgotPasswordDialogOpen, setIsForgotPasswordDialogOpen] =
     useState(false);
   const [loading, setLoading] = useState(false);
@@ -128,6 +130,12 @@ export default function LoginPage() {
 
   const togglePasswordVisibility = () => {
     setShowPassword((prevState: any) => !prevState);
+  };
+  const togglePasswordNewVisibility = () => {
+    setShowNewPassword((prevState: any) => !prevState);
+  };
+  const togglePasswordConfirmNewVisibility = () => {
+    setShowNewConfirmPassword((prevState: any) => !prevState);
   };
 
   useEffect(() => {
@@ -573,14 +581,24 @@ export default function LoginPage() {
             className="space-y-4"
           >
             {/* New Password Field */}
+
             <div className="space-y-2">
               <Label htmlFor="newPassword">New Password</Label>
-              <Input
-                id="newPassword"
-                type="password"
-                placeholder="Enter new password"
-                {...registerResetPassword("newPassword")} // Use registerResetPassword
-              />
+              <div className="relative">
+                <Input
+                  id="newPassword"
+                  type={showNewPassword ? "text" : "password"}
+                  placeholder="Enter new password"
+                  {...registerResetPassword("newPassword")}
+                />
+                <div
+                  className="absolute inset-y-0 right-3 flex items-center cursor-pointer"
+                  onClick={togglePasswordNewVisibility}
+                  data-testid="toggle-password-new-visibility"
+                >
+                  {showNewPassword ? <IoMdEyeOff /> : <IoMdEye />}
+                </div>
+              </div>
               {resetPasswordErrors.newPassword && (
                 <p className="text-sm text-red-500">
                   {resetPasswordErrors.newPassword.message}
@@ -589,14 +607,24 @@ export default function LoginPage() {
             </div>
 
             {/* Confirm Password Field */}
+
             <div className="space-y-2">
               <Label htmlFor="confirmPassword">Confirm Password</Label>
-              <Input
-                id="confirmPassword"
-                type="password"
-                placeholder="Re-enter your new password"
-                {...registerResetPassword("confirmPassword")} // Use registerResetPassword
-              />
+              <div className="relative">
+                <Input
+                  id="confirmPassword"
+                  type={showNewConfirmPassword ? "text" : "password"}
+                  placeholder="Re-enter your new password"
+                  {...registerResetPassword("confirmPassword")}
+                />
+                <div
+                  className="absolute inset-y-0 right-3 flex items-center cursor-pointer"
+                  onClick={togglePasswordConfirmNewVisibility}
+                  data-testid="toggle-password-confirm-new-visibility"
+                >
+                  {showNewConfirmPassword ? <IoMdEyeOff /> : <IoMdEye />}
+                </div>
+              </div>
               {resetPasswordErrors.confirmPassword && (
                 <p className="text-sm text-red-500">
                   {resetPasswordErrors.confirmPassword.message}
