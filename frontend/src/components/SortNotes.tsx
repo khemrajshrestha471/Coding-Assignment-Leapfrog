@@ -19,7 +19,7 @@ const NotesSortButton = ({ onSortChange }: { onSortChange: (sortBy: string) => v
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button className="flex items-center gap-2 bg-blue-500 text-white hover:bg-blue-600">
+        <Button className="flex items-center gap-2 bg-blue-500 text-white hover:bg-blue-600 cursor-pointer">
           Sort Notes
           <ArrowDownAZ className="h-4 w-4" />
         </Button>

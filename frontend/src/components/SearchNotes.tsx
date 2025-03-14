@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Input } from "@/components/ui/input"; // Import shadcn Input component
 import { Button } from "@/components/ui/button"; // Import shadcn Button component
 import { Loader2 } from "lucide-react"; // Import loading spinner from lucide-react
+import { sonner } from '@/components/ui/sonner';
 
 interface SearchNotesProps {
   userId: string; // User ID for fetching notes
@@ -21,8 +22,7 @@ const SearchNotes: React.FC<SearchNotesProps> = ({
   // Handle search button click
   const handleSearch = () => {
     if (!searchQuery.trim()) {
-      alert("Please enter a search term.");
-      return;
+      return sonner.error(<span className="text-red-500">Please enter a search term.</span>);;
     }
     onSearch(searchQuery, true); // Trigger search in parent component
   };
@@ -45,7 +45,7 @@ const SearchNotes: React.FC<SearchNotesProps> = ({
       />
 
       {/* Search Button */}
-      <Button onClick={handleSearch} disabled={isSearching}>
+      <Button onClick={handleSearch} disabled={isSearching} className="cursor-pointer">
         {isSearching ? (
           <>
             <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Searching...
@@ -56,7 +56,7 @@ const SearchNotes: React.FC<SearchNotesProps> = ({
       </Button>
 
       {/* Reset Button */}
-      <Button variant="outline" onClick={handleReset} disabled={isSearching}>
+      <Button variant="outline" onClick={handleReset} disabled={isSearching} className="cursor-pointer">
         Reset
       </Button>
     </div>
