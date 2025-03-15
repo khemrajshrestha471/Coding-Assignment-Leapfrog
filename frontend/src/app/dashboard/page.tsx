@@ -492,12 +492,20 @@ const Page = () => {
                     <CardContent>
                       <p>{note.content}</p>
                       <p className="text-sm text-gray-500 mt-2">
-                        Created at: {new Date(note.created_at).toLocaleString()}
+                        Created at:
+                        {new Date(
+                          new Date(note.created_at).getTime() -
+                            (5 * 60 * 60 * 1000 + 45 * 60 * 1000)
+                        ).toLocaleString()}
                       </p>
+
                       {note.updated_at !== note.created_at && (
                         <p className="text-sm text-gray-500 mt-2">
                           Updated at:
-                          {new Date(note.updated_at).toLocaleString()}
+                          {new Date(
+                            new Date(note.updated_at).getTime() -
+                              (5 * 60 * 60 * 1000 + 45 * 60 * 1000)
+                          ).toLocaleString()}
                         </p>
                       )}
                     </CardContent>
