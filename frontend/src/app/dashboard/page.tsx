@@ -135,7 +135,7 @@ const Page = () => {
     const limit = 2; // Set the limit for the number of notes to fetch per request
     try {
       const response = await fetch(
-        `https://leapfrog-note-taking-app-backend-ecaaaccdeteqgues.centralindia-01.azurewebsites.net/api/fetchNote/notes/${isUserId}?page=${page}&limit=${limit}`
+        `https://leapfrog-note-taking-app-backend-ecaaaccdeteqgues.eastasia-01.azurewebsites.net/api/fetchNote/notes/${isUserId}?page=${page}&limit=${limit}`
       );
       if (!response.ok) {
         sonner.error(
@@ -174,7 +174,7 @@ const Page = () => {
     setIsSearching(true);
     try {
       const response = await fetch(
-        `https://leapfrog-note-taking-app-backend-ecaaaccdeteqgues.centralindia-01.azurewebsites.net/api/searchNote/search-notes/${isUserId}?query=${encodeURIComponent(
+        `https://leapfrog-note-taking-app-backend-ecaaaccdeteqgues.eastasia-01.azurewebsites.net/api/searchNote/search-notes/${isUserId}?query=${encodeURIComponent(
           query
         )}`
       );
@@ -226,7 +226,7 @@ const Page = () => {
     }
     try {
       const response = await fetch(
-        `https://leapfrog-note-taking-app-backend-ecaaaccdeteqgues.centralindia-01.azurewebsites.net/api/sortNote/sort-notes/${isUserId}?sortBy=${sortBy}`
+        `https://leapfrog-note-taking-app-backend-ecaaaccdeteqgues.eastasia-01.azurewebsites.net/api/sortNote/sort-notes/${isUserId}?sortBy=${sortBy}`
       );
       if (!response.ok) {
         sonner.error(
@@ -267,7 +267,7 @@ const Page = () => {
 
     try {
       const response = await fetch(
-        `https://leapfrog-note-taking-app-backend-ecaaaccdeteqgues.centralindia-01.azurewebsites.net/api/deleteNote/delete-note/${isUserId}/${noteToDelete}`,
+        `https://leapfrog-note-taking-app-backend-ecaaaccdeteqgues.eastasia-01.azurewebsites.net/api/deleteNote/delete-note/${isUserId}/${noteToDelete}`,
         {
           method: "DELETE",
         }
@@ -298,7 +298,7 @@ const Page = () => {
     setIsSubmitting(true);
     try {
       const response = await fetch(
-        "https://leapfrog-note-taking-app-backend-ecaaaccdeteqgues.centralindia-01.azurewebsites.net/api/addNote/add-note",
+        "https://leapfrog-note-taking-app-backend-ecaaaccdeteqgues.eastasia-01.azurewebsites.net/api/addNote/add-note",
         {
           method: "POST",
           headers: {
@@ -349,7 +349,7 @@ const Page = () => {
       }
 
       const response = await fetch(
-        `https://leapfrog-note-taking-app-backend-ecaaaccdeteqgues.centralindia-01.azurewebsites.net/api/updateNote/update-note/${isUserId}/${editingNote?.id}`,
+        `https://leapfrog-note-taking-app-backend-ecaaaccdeteqgues.eastasia-01.azurewebsites.net/api/updateNote/update-note/${isUserId}/${editingNote?.id}`,
         {
           method: "PUT",
           headers: {
@@ -399,7 +399,7 @@ const Page = () => {
           return;
         }
         const response = await fetch(
-          `https://leapfrog-note-taking-app-backend-ecaaaccdeteqgues.centralindia-01.azurewebsites.net/api/fetchUserProfile/fetch-users/${isUserId}`
+          `https://leapfrog-note-taking-app-backend-ecaaaccdeteqgues.eastasia-01.azurewebsites.net/api/fetchUserProfile/fetch-users/${isUserId}`
         );
         if (!response.ok) {
           sonner.error(

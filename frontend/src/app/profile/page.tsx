@@ -130,7 +130,7 @@ const Page = () => {
     const fetchUserDetails = async () => {
       try {
         const response = await fetch(
-          `https://leapfrog-note-taking-app-backend-ecaaaccdeteqgues.centralindia-01.azurewebsites.net/api/fetchUserProfile/fetch-users/${isUserId}`
+          `https://leapfrog-note-taking-app-backend-ecaaaccdeteqgues.eastasia-01.azurewebsites.net/api/fetchUserProfile/fetch-users/${isUserId}`
         );
         if (!response.ok) {
           sonner.error(
@@ -169,7 +169,7 @@ const Page = () => {
 
       // Send a PUT request to update the username
       const response = await fetch(
-        `https://leapfrog-note-taking-app-backend-ecaaaccdeteqgues.centralindia-01.azurewebsites.net/api/updateUsername/update-username/${isUserId}`,
+        `https://leapfrog-note-taking-app-backend-ecaaaccdeteqgues.eastasia-01.azurewebsites.net/api/updateUsername/update-username/${isUserId}`,
         {
           method: "PUT",
           headers: {
@@ -214,7 +214,7 @@ const Page = () => {
     try {
       // Send a request to verify the old password
       const response = await fetch(
-        `https://leapfrog-note-taking-app-backend-ecaaaccdeteqgues.centralindia-01.azurewebsites.net/api/changePassword/change-password/${isUserId}`,
+        `https://leapfrog-note-taking-app-backend-ecaaaccdeteqgues.eastasia-01.azurewebsites.net/api/changePassword/change-password/${isUserId}`,
         {
           method: "PUT",
           headers: {
@@ -251,7 +251,7 @@ const Page = () => {
     try {
       // Send a PUT request to update the password
       const response = await fetch(
-        `https://leapfrog-note-taking-app-backend-ecaaaccdeteqgues.centralindia-01.azurewebsites.net/api/changePassword/change-password/${isUserId}`,
+        `https://leapfrog-note-taking-app-backend-ecaaaccdeteqgues.eastasia-01.azurewebsites.net/api/changePassword/change-password/${isUserId}`,
         {
           method: "PUT",
           headers: {

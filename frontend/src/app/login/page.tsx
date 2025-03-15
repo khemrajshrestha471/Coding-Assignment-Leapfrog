@@ -157,7 +157,7 @@ export default function LoginPage() {
   const onSubmit = async (data: LoginFormData) => {
     try {
       // Make request to check email and validate password
-      const response = await fetch("https://leapfrog-note-taking-app-backend-ecaaaccdeteqgues.centralindia-01.azurewebsites.net/api/login/enter", {
+      const response = await fetch("https://leapfrog-note-taking-app-backend-ecaaaccdeteqgues.eastasia-01.azurewebsites.net/api/login/enter", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -206,7 +206,7 @@ export default function LoginPage() {
     try {
       // Step 1: Verify if the entered data matches the database
       const verifyResponse = await fetch(
-        "https://leapfrog-note-taking-app-backend-ecaaaccdeteqgues.centralindia-01.azurewebsites.net/api/checkUserEmailPhone/check-user-existence",
+        "https://leapfrog-note-taking-app-backend-ecaaaccdeteqgues.eastasia-01.azurewebsites.net/api/checkUserEmailPhone/check-user-existence",
         {
           method: "POST",
           headers: {
@@ -237,7 +237,7 @@ export default function LoginPage() {
 
       // Step 2: If verification is successful, send OTP
       const otpResponse = await fetch(
-        "https://leapfrog-note-taking-app-backend-ecaaaccdeteqgues.centralindia-01.azurewebsites.net/api/handleOtp/send-otp",
+        "https://leapfrog-note-taking-app-backend-ecaaaccdeteqgues.eastasia-01.azurewebsites.net/api/handleOtp/send-otp",
         {
           method: "POST",
           headers: {
@@ -283,7 +283,7 @@ export default function LoginPage() {
       );
     try {
       const verifyResponse = await fetch(
-        "https://leapfrog-note-taking-app-backend-ecaaaccdeteqgues.centralindia-01.azurewebsites.net/api/handleOtp/verify-otp",
+        "https://leapfrog-note-taking-app-backend-ecaaaccdeteqgues.eastasia-01.azurewebsites.net/api/handleOtp/verify-otp",
         {
           method: "POST",
           headers: {
@@ -323,7 +323,7 @@ export default function LoginPage() {
   const onSubmitResetPassword = async (data: ResetPasswordFormData) => {
     try {
       const resetResponse = await fetch(
-        "https://leapfrog-note-taking-app-backend-ecaaaccdeteqgues.centralindia-01.azurewebsites.net/api/updatePassword/resetPassword",
+        "https://leapfrog-note-taking-app-backend-ecaaaccdeteqgues.eastasia-01.azurewebsites.net/api/updatePassword/resetPassword",
         {
           method: "PUT",
           headers: {
