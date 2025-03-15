@@ -157,7 +157,7 @@ export default function LoginPage() {
   const onSubmit = async (data: LoginFormData) => {
     try {
       // Make request to check email and validate password
-      const response = await fetch("http://localhost:3000/api/login/enter", {
+      const response = await fetch("http://localhost:4000/api/login/enter", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -206,7 +206,7 @@ export default function LoginPage() {
     try {
       // Step 1: Verify if the entered data matches the database
       const verifyResponse = await fetch(
-        "http://localhost:3000/api/checkUserEmailPhone/check-user-existence",
+        "http://localhost:4000/api/checkUserEmailPhone/check-user-existence",
         {
           method: "POST",
           headers: {
@@ -237,7 +237,7 @@ export default function LoginPage() {
 
       // Step 2: If verification is successful, send OTP
       const otpResponse = await fetch(
-        "http://localhost:3000/api/handleOtp/send-otp",
+        "http://localhost:4000/api/handleOtp/send-otp",
         {
           method: "POST",
           headers: {
@@ -283,7 +283,7 @@ export default function LoginPage() {
       );
     try {
       const verifyResponse = await fetch(
-        "http://localhost:3000/api/handleOtp/verify-otp",
+        "http://localhost:4000/api/handleOtp/verify-otp",
         {
           method: "POST",
           headers: {
@@ -323,7 +323,7 @@ export default function LoginPage() {
   const onSubmitResetPassword = async (data: ResetPasswordFormData) => {
     try {
       const resetResponse = await fetch(
-        "http://localhost:3000/api/updatePassword/resetPassword",
+        "http://localhost:4000/api/updatePassword/resetPassword",
         {
           method: "PUT",
           headers: {
