@@ -108,7 +108,7 @@ export default function SignupPage() {
     setLoading(true);
     try {
       const checkExistenceResponse = await fetch(
-        "https://leapfrog-note-taking-app-backend-ecaaaccdeteqgues.centralindia-01.azurewebsites.net/api/checkExistence/check-existence",
+        "http://localhost:3000/api/checkExistence/check-existence",
         {
           method: "POST",
           headers: {
@@ -132,7 +132,7 @@ export default function SignupPage() {
 
       // Send OTP to the provided email
       const otpResponse = await fetch(
-        "https://leapfrog-note-taking-app-backend-ecaaaccdeteqgues.centralindia-01.azurewebsites.net/api/handleOtp/send-otp",
+        "http://localhost:3000/api/handleOtp/send-otp",
         {
           method: "POST",
           headers: {
@@ -177,7 +177,7 @@ export default function SignupPage() {
       );
     try {
       const verifyResponse = await fetch(
-        "https://leapfrog-note-taking-app-backend-ecaaaccdeteqgues.centralindia-01.azurewebsites.net/api/handleOtp/verify-otp",
+        "http://localhost:3000/api/handleOtp/verify-otp",
         {
           method: "POST",
           headers: {
@@ -189,7 +189,7 @@ export default function SignupPage() {
 
       if (verifyResponse.ok) {
         const registrationResponse = await fetch(
-          "https://leapfrog-note-taking-app-backend-ecaaaccdeteqgues.centralindia-01.azurewebsites.net/api/signup/register",
+          "http://localhost:3000/api/signup/register",
           {
             method: "POST",
             headers: {
