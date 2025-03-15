@@ -4,6 +4,107 @@ const moment = require("moment-timezone");
 
 const router = express.Router();
 
+/**
+ * @swagger
+ * /api/updateNote/update-note/{user_id}/{note_id}:
+ *   put:
+ *     summary: Update a note by user ID and note ID
+ *     description: Update the title and/or content of a specific note for a user. The `updated_at` field is automatically set to the current time in the Asia/Kathmandu (NPT) time zone.
+ *     parameters:
+ *       - in: path
+ *         name: user_id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: The ID of the user who owns the note.
+ *       - in: path
+ *         name: note_id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: The ID of the note to update.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               title:
+ *                 type: string
+ *                 description: The new title of the note.
+ *               content:
+ *                 type: string
+ *                 description: The new content of the note.
+ *             example:
+ *               title: "Updated title"
+ *               content: "Updated Content"
+ *     responses:
+ *       200:
+ *         description: Note updated successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: integer
+ *                   description: The ID of the updated note.
+ *                 user_id:
+ *                   type: integer
+ *                   description: The ID of the user who owns the note.
+ *                 title:
+ *                   type: string
+ *                   description: The updated title of the note.
+ *                 content:
+ *                   type: string
+ *                   description: The updated content of the note.
+ *                 created_at:
+ *                   type: string
+ *                   format: date-time
+ *                   description: The timestamp when the note was created.
+ *                 updated_at:
+ *                   type: string
+ *                   format: date-time
+ *                   description: The timestamp when the note was last updated.
+ *               example:
+ *                 id: 29
+ *                 user_id: 3
+ *                 title: "Updated title"
+ *                 content: "Updated Content"
+ *                 created_at: "2025-03-15T15:33:58.000Z"
+ *                 updated_at: "2025-03-15T16:26:13.000Z"
+ *       400:
+ *         description: Bad request. Missing or invalid fields (title or content).
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "At least one field (title or content) is required for update"
+ *       404:
+ *         description: Note not found or does not belong to the user.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Note not found or does not belong to the user"
+ *       500:
+ *         description: Internal server error. Failed to update the note.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Failed to update note"
+ */
 router.put("/update-note/:user_id/:note_id", async (req, res) => {
   try {
     const { user_id, note_id } = req.params;

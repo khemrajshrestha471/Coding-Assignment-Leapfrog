@@ -3,7 +3,83 @@ const pool = require("../../database/db"); // Importing the pool for the connect
 
 const router = express.Router();
 
-// GET /users/:user_id - Fetch user details by user_id
+/**
+ * @swagger
+ * /api/fetchUserProfile/fetch-users/{user_id}:
+ *   get:
+ *     summary: Fetch user details by user ID
+ *     description: Retrieve user details (username, email, phone, password, and created_at) for a specific user by providing their user ID.
+ *     parameters:
+ *       - in: path
+ *         name: user_id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: The ID of the user whose details are to be fetched.
+ *     responses:
+ *       200:
+ *         description: User details fetched successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 user:
+ *                   type: object
+ *                   properties:
+ *                     username:
+ *                       type: string
+ *                       description: The username of the user.
+ *                     email:
+ *                       type: string
+ *                       description: The email of the user.
+ *                     phone:
+ *                       type: string
+ *                       description: The phone number of the user.
+ *                     password:
+ *                       type: string
+ *                       description: The hashed password of the user.
+ *                     created_at:
+ *                       type: string
+ *                       format: date-time
+ *                       description: The timestamp when the user was created.
+ *                   example:
+ *                     username: "Khemraj"
+ *                     email: "check@gmail.com"
+ *                     phone: "9800009999"
+ *                     password: "$2b$10$l/W0dDxOSfI4NvUYEJFgJ.0.XS1hnctz2M1eMTM7pXV0NBdocgDxm"
+ *                     created_at: "2025-03-12T10:44:08.356Z"
+ *       400:
+ *         description: Bad request. Missing or invalid user_id.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "user_id is required"
+ *       404:
+ *         description: User not found.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "User not found"
+ *       500:
+ *         description: Internal server error. Failed to fetch user details.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Failed to fetch user details"
+ */
 router.get("/fetch-users/:user_id", async (req, res) => {
   try {
     const { user_id } = req.params;

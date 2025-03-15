@@ -3,7 +3,87 @@ const pool = require("../../database/db"); // Importing the pool for the connect
 
 const router = express.Router();
 
-// DELETE /delete-note/:user_id/:note_id - Delete a specific note by user_id and note_id
+/**
+ * @swagger
+ * /api/deleteNote/delete-note/{user_id}/{note_id}:
+ *   delete:
+ *     summary: Delete a specific note by user ID and note ID
+ *     description: Delete a note from the database for a specific user by providing the user ID and note ID.
+ *     parameters:
+ *       - in: path
+ *         name: user_id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: The ID of the user who owns the note.
+ *       - in: path
+ *         name: note_id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: The ID of the note to delete.
+ *     responses:
+ *       200:
+ *         description: Note deleted successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Note deleted successfully"
+ *                 deletedNote:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: integer
+ *                       description: The ID of the deleted note.
+ *                     user_id:
+ *                       type: integer
+ *                       description: The ID of the user who owned the note.
+ *                     title:
+ *                       type: string
+ *                       description: The title of the deleted note.
+ *                     content:
+ *                       type: string
+ *                       description: The content of the deleted note.
+ *                   example:
+ *                     id: 14
+ *                     user_id: 4
+ *                     title: "eee"
+ *                     content: "eee"
+ *       400:
+ *         description: Bad request. Missing or invalid user_id or note_id.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "user_id and note_id are required"
+ *       404:
+ *         description: Note not found or does not belong to the user.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Note not found or does not belong to the user"
+ *       500:
+ *         description: Internal server error. Failed to delete the note.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Failed to delete note"
+ */
 router.delete("/delete-note/:user_id/:note_id", async (req, res) => {
   try {
     const { user_id, note_id } = req.params; // Get user_id and note_id from the URL params
