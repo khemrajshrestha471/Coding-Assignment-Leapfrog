@@ -1,6 +1,7 @@
 const express = require("express");
-const bcrypt = require("bcrypt");
-const pool = require("../../database/db"); // Importing the pool for the connection to the postgres database
+const bcrypt = require("bcryptjs");
+// const pool = require("../../database/db"); // Importing the pool for the connection to the postgres database
+const pool = require('/app/database/db');
 
 const router = express.Router();
 

@@ -54,6 +54,10 @@ app.use('/api/fetchUserProfile', fetchUserProfiles);
 app.use('/api/updateUsername', updateUsernames);
 app.use('/api/changePassword', changePasswords);
 
-app.listen(process.env.PORT || 5000, () => {
-    console.log("Server listening on port " + process.env.PORT || 5000)
-})
+// app.listen(process.env.PORT || 5000, () => {
+//     console.log("Server listening on port " + process.env.PORT || 5000)
+// })
+
+app.listen(process.env.PORT || 4000, "0.0.0.0", () => {
+  console.log("Server listening on port " + (process.env.PORT || 4000));
+});

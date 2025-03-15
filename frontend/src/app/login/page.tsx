@@ -194,7 +194,7 @@ export default function LoginPage() {
     } catch (error: any) {
       sonner.error(
         <span className="text-red-500">
-          Login failed. Please check your credentials.
+          An error has occurred. Please try again later and verify your credentials.
         </span>
       );
     }

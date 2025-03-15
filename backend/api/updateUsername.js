@@ -1,5 +1,6 @@
 const express = require("express");
-const pool = require("../../database/db"); // Import the database pool
+// const pool = require("../../database/db"); // Import the database pool
+const pool = require('/app/database/db');
 
 const router = express.Router();
 

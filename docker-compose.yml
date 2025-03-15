@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  frontend:
+    container_name: leapfrog-frontend
+    build:
+      context: ./frontend  # Path to frontend Dockerfile
+      dockerfile: Dockerfile
+    ports:
+      - "${FRONTEND_PORT}:3000"  # Map frontend port dynamically
+    environment:
+      - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}  # Frontend will call backend using this URL
+      - PORT=${FRONTEND_PORT}
+    depends_on:
+      - backend
+
+  backend:
+    container_name: leapfrog-backend
+    build:
+      context: .  # Root path for both backend and database file
+      dockerfile: backend/Dockerfile
+    ports:
+      - "${BACKEND_PORT}:4000"  # Map backend port dynamically
+    environment:
+      - DB_HOST=${DB_HOST}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_NAME=${DB_NAME}

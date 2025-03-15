@@ -1,5 +1,6 @@
 const express = require("express");
-const pool = require("../../database/db"); // Importing the pool for the connection to the postgres database
+// const pool = require("../../database/db"); // Importing the pool for the connection to the postgres database
+const pool = require('/app/database/db');
 
 const router = express.Router();
 

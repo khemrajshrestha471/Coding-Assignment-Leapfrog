@@ -1,9 +1,10 @@
 const express = require("express");
-const pool = require("../../database/db");
+// const pool = require("../../database/db");
+const pool = require('/app/database/db');
 
 const router = express.Router();
 
-const bcrypt = require("bcrypt");
+const bcrypt = require("bcryptjs");
 
 // PUT endpoint to update password
 router.put("/resetPassword", async (req, res) => {
