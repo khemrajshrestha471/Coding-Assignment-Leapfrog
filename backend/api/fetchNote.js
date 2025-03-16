@@ -3,7 +3,88 @@ const pool = require("../../database/db"); // Importing the pool for the connect
 
 const router = express.Router();
 
-// GET /notes/:user_id - Fetch all notes for a specific user
+/**
+ * @swagger
+ * /api/fetchNote/notes/{user_id}:
+ *   get:
+ *     summary: Fetch paginated notes for a specific user
+ *     description: Retrieve a paginated list of notes for a given user ID, sorted by creation date in descending order.
+ *     parameters:
+ *       - in: path
+ *         name: user_id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: The ID of the user whose notes are to be fetched.
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *         description: The page number for pagination (default is 1).
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           default: 2
+ *         description: The number of notes per page (default is 2).
+ *     responses:
+ *       200:
+ *         description: A paginated list of notes and the total number of notes.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 notes:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: integer
+ *                         description: The unique ID of the note.
+ *                       user_id:
+ *                         type: integer
+ *                         description: The ID of the user who created the note.
+ *                       title:
+ *                         type: string
+ *                         description: The title of the note.
+ *                       content:
+ *                         type: string
+ *                         description: The content of the note.
+ *                       created_at:
+ *                         type: string
+ *                         format: date-time
+ *                         description: The timestamp when the note was created.
+ *                       updated_at:
+ *                         type: string
+ *                         format: date-time
+ *                         description: The timestamp when the note was last updated.
+ *                 totalNotes:
+ *                   type: integer
+ *                   description: The total number of notes for the user.
+ *       400:
+ *         description: Bad request. The `user_id` parameter is missing.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "user_id is required"
+ *       500:
+ *         description: Internal server error. Failed to fetch notes.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Failed to fetch notes"
+ */
 router.get("/notes/:user_id", async (req, res) => {
   try {
     const { user_id } = req.params;

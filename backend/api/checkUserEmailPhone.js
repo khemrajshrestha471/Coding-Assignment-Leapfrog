@@ -3,10 +3,93 @@ const pool = require("../../database/db");
 
 const router = express.Router();
 
-// Endpoint to check username, email, and phone
+/**
+ * @swagger
+ * /api/checkUserEmailPhone/check-user-existence:
+ *   post:
+ *     summary: Check if a user exists with the provided username, email, and phone
+ *     description: Verify if a user exists in the database with the provided username, email, and phone number.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               username:
+ *                 type: string
+ *                 description: The username to check.
+ *               email:
+ *                 type: string
+ *                 description: The email to check.
+ *               phone:
+ *                 type: string
+ *                 description: The phone number to check.
+ *             example:
+ *               username: "testuser"
+ *               email: "testuser@example.com"
+ *               phone: "1234567890"
+ *     responses:
+ *       200:
+ *         description: User exists with the provided details.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 exists:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: "User exists with the provided username, email, and phone"
+ *                 user:
+ *                   type: object
+ *                   properties:
+ *                     username:
+ *                       type: string
+ *                       example: "testuser"
+ *                     email:
+ *                       type: string
+ *                       example: "testuser@example.com"
+ *                     phone:
+ *                       type: string
+ *                       example: "1234567890"
+ *       400:
+ *         description: Bad request. Missing or invalid fields (username, email, or phone).
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Username is required and must be a valid string"
+ *       404:
+ *         description: No matching user found with the provided details.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "No matching user found with the provided details"
+ *       500:
+ *         description: Internal server error. Failed to check user details.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Internal server error"
+ */
 router.post('/check-user-existence', async (req, res) => {
-    const { username, email, phone } = req.body;
+  const { username, email, phone } = req.body;
 
+  // Validate input
   if (!username || typeof username !== 'string' || username.trim().length === 0) {
     return res.status(400).json({ message: 'Username is required and must be a valid string' });
   }
