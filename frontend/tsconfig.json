@@ -41,7 +41,7 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
-    "babel.config1.js",
+    "babel.config.js",
     "src",
     "src/jest.setup.js",
     "jest.config.js"
