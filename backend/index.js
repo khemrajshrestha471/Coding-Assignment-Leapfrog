@@ -30,7 +30,7 @@ const options = {
   definition: {
     openapi: '3.0.0',
     info: {
-      title: 'Leapfrog Note-Taking Application',
+      title: 'Note Taking Application | Leapfrog ',
       version: '1.0.0',
       description: 'API documentation for the Leapfrog Note-Taking Application',
     },
@@ -92,7 +92,3 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
 app.listen(process.env.PORT || 5000, () => {
   console.log("Server listening on port " + (process.env.PORT || 5000));
 });
-
-
-
-// ............................ SWAGGER URL :- http://localhost:4000/api-docs/#/default
