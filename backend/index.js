@@ -27,9 +27,10 @@ const app = express();
 
 // CORS checks
 app.use(cors({
-  origin: process.env.FRONTEND_URL,
+  origin: "https://leapfrog-note-taking-app-fbh2fqaqdqd0b6aj.eastasia-01.azurewebsites.net",
   credentials: true,
 }));
+
 
 app.use(bodyParser.json()); // Parse JSON request bodies
 
