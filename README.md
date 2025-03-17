@@ -2,7 +2,7 @@
 
 ## Overview
 
-This is a full-stack web application designed for note-taking, featuring a responsive user interface and a robust backend. The application allows users to create, edit, delete, and view notes. It also includes an authentication system with login and signup functionalities, send **OTP** for verification and secured with **JSON Web Tokens (JWT)** and **localStorage**. The application is **dockerized** and **deployed** the dockerized image to the cloud (**Azure**), whose url is [this](https://leapfrog-note-taking-app-fbh2fqaqdqd0b6aj.eastasia-01.azurewebsites.net/).
+This is a full-stack web application designed for note-taking, featuring a responsive user interface and a robust backend. The application allows users to create, edit, delete, and view notes. It also includes an authentication system with login and signup functionalities, send **OTP** for verification and secured with **JSON Web Tokens (JWT)** and **localStorage**. The application is **dockerized** and **deployed** the dockerized image to the cloud (**Azure**), whose url is [this](http://20.197.52.87:3000/).
 
 ---
 
@@ -168,7 +168,7 @@ You can find the format used in `.env` in `.env.example` for reference.
 
 ## API Documentation
 
-API documentation is available and implemented using Swagger. This provides a comprehensive guide to the API endpoints, request/response formats, and example usage. You can access the Swagger documentation [here](http://localhost:4000/api-docs/#/default).
+API documentation is available and implemented using Swagger. This provides a comprehensive guide to the API endpoints, request/response formats, and example usage. You can access the Swagger documentation [here](http://20.197.52.87:4000/api-docs/#/default).
 
 ---
 

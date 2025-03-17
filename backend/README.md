@@ -51,4 +51,4 @@ PASSWORD = your_password_setup_for_opt_configuration
 | `DELETE` | `/api/deleteNote/delete-note/${user_id}/${note_id}` | Delete a note |
 | ...    | **9 More Endpoints** | ... |
 
-Full API documentation is available in [**Swagger**](http://localhost:4000/api-docs/#/default).
+Full API documentation is available in [**Swagger**](http://20.197.52.87:4000/api-docs/#/default).
