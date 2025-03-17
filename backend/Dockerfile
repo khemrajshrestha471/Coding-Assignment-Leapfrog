@@ -10,7 +10,7 @@ ENV PORT=${PORT}
 WORKDIR /app
 
 # Copy package.json and package-lock.json
-COPY package*.json ./
+COPY backend/package*.json ./
 
 # Install dependencies
 RUN npm install
@@ -19,7 +19,7 @@ RUN npm install
 COPY . .
 
 # Copy the database folder
-COPY backend/database/ /app/database
+COPY database/ /app/database
 
 # Expose the port (optional, for documentation)
 EXPOSE ${PORT}

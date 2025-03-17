@@ -19,7 +19,7 @@ RUN npm install
 COPY . .
 
 # Set the working directory to /app/src/app (my frontend working directory in the container)
-WORKDIR /app/src/app
+WORKDIR /app
 
 # Build the Next.js app
 RUN npm run build

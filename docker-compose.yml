@@ -12,8 +12,8 @@ services:
   backend:
     container_name: leapfrog-backend
     build:
-      context: .  # Root path for both backend and database file
-      dockerfile: backend/Dockerfile
+      context: ./backend  # Root path for both backend and database file
+      dockerfile: Dockerfile
     ports:
       - "${BACKEND_PORT}:4000"  # Map backend port dynamically
     environment:
