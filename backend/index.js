@@ -107,7 +107,7 @@ const options = {
     },
     servers: [
       {
-        url: `http://20.197.52.87:${process.env.PORT || 5000}`,
+        url: `http://20.197.52.87:${process.env.PORT || 4000}`,
         description: 'API documentation',
       },
     ],
