@@ -6,6 +6,10 @@ services:
     container_name: leapfrog-database
     env_file:
       - ./.env
+    environment:
+      - POSTGRES_PASSWORD=${DB_PASSWORD}  # Make sure to set DB_PASSWORD in your .env file
+      - POSTGRES_USER=${DB_USER}          # Optional: set DB_USER in your .env file
+      - POSTGRES_DB=${DB_NAME} 
     ports:
       - ${DB_PORT}:5432
 
