@@ -186,11 +186,11 @@ router.post("/enter", async (req, res) => {
     );
 
     // Set the token in a cookie
-    res.cookie('token', token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production', // Ensure secure cookies in production
-      maxAge: 24 * 60 * 60 * 1000, // 1 day
-    });
+        res.cookie('token', token, {
+          httpOnly: true,
+          secure: process.env.SESSION_SECRET,
+          maxAge: 1 * 60 * 60 * 1000,
+        });
 
     // Password is correct, return user data (excluding the password)
     res.status(200).json({
