@@ -124,6 +124,8 @@ app.use(cors({
   credentials: true,
 }));
 
+app.use(bodyParser.json());
+
 /**
  * @swagger
  * /:
