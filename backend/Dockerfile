@@ -10,7 +10,7 @@ ENV PORT=${PORT}
 WORKDIR /app
 
 # Copy package.json and package-lock.json
-COPY backend/package*.json ./
+COPY package*.json ./
 
 # Install dependencies
 RUN npm install
