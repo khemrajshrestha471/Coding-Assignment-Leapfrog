@@ -27,7 +27,7 @@ const app = express();
 
 // CORS checks
 app.use(cors({
-  origin: "https://leapfrog-note-taking-app-fbh2fqaqdqd0b6aj.eastasia-01.azurewebsites.net",
+  origin: "https://20.197.52.87:3000",
   credentials: true,
 }));
 
