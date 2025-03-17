@@ -2,7 +2,7 @@
 
 ## Overview
 
-This is a full-stack web application designed for note-taking, featuring a responsive user interface and a robust backend. The application allows users to create, edit, delete, and view notes. It also includes an authentication system with login and signup functionalities, send **OTP** for verification and secured with **JSON Web Tokens (JWT)** and **localStorage**. The application is **dockerized** and **deployed** the dockerized image to the cloud (**Azure**), whose url is [this](http://20.197.52.87:3000/).
+This is a full-stack web application designed for note-taking, featuring a responsive user interface and a robust backend. The application allows users to create, edit, delete, and view notes. It also includes an authentication system with login and signup functionalities, send **OTP** for verification and secured with **JSON Web Tokens (JWT)** and **localStorage**. The application is **dockerized** and **deployed** the dockerized image to the cloud (**Azure**), whose url is [this](http://leapfrog-note-taker.khemrajshrestha.com.np).
 
 ---
 
