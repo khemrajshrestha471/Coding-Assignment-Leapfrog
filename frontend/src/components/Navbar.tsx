@@ -93,7 +93,7 @@ export default function Navbar() {
           return;
         }
         const response = await fetch(
-          `http://localhost:4000/api/fetchUserProfile/fetch-users/${isUserId}`
+          `http://20.197.52.87:4000/api/fetchUserProfile/fetch-users/${isUserId}`
         );
         if (!response.ok) {
           sonner.error(

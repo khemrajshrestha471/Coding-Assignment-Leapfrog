@@ -108,7 +108,7 @@ export default function SignupPage() {
     setLoading(true);
     try {
       const checkExistenceResponse = await fetch(
-        "http://localhost:4000/api/checkExistence/check-existence",
+        "http://20.197.52.87:4000/api/checkExistence/check-existence",
         {
           method: "POST",
           headers: {
@@ -132,7 +132,7 @@ export default function SignupPage() {
 
       // Send OTP to the provided email
       const otpResponse = await fetch(
-        "http://localhost:4000/api/handleOtp/send-otp",
+        "http://20.197.52.87:4000/api/handleOtp/send-otp",
         {
           method: "POST",
           headers: {
@@ -177,7 +177,7 @@ export default function SignupPage() {
       );
     try {
       const verifyResponse = await fetch(
-        "http://localhost:4000/api/handleOtp/verify-otp",
+        "http://20.197.52.87:4000/api/handleOtp/verify-otp",
         {
           method: "POST",
           headers: {
@@ -189,7 +189,7 @@ export default function SignupPage() {
 
       if (verifyResponse.ok) {
         const registrationResponse = await fetch(
-          "http://localhost:4000/api/signup/register",
+          "http://20.197.52.87:4000/api/signup/register",
           {
             method: "POST",
             headers: {

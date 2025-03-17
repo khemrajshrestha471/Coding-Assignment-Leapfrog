@@ -1,18 +1,13 @@
 version: '3.8'
 
 services:
-  frontend:
-    container_name: leapfrog-frontend
-    build:
-      context: ./frontend  # Path to frontend Dockerfile
-      dockerfile: Dockerfile
+  database:
+    image: postgres
+    container_name: leapfrog-database
+    env_file:
+      - ./.env
     ports:
-      - "${FRONTEND_PORT}:3000"  # Map frontend port dynamically
-    environment:
-      - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}  # Frontend will call backend using this URL
-      - PORT=${FRONTEND_PORT}
-    depends_on:
-      - backend
+      - ${DB_PORT}:5432
 
   backend:
     container_name: leapfrog-backend
@@ -26,3 +21,18 @@ services:
       - DB_USER=${DB_USER}
       - DB_PASSWORD=${DB_PASSWORD}
       - DB_NAME=${DB_NAME}
+    depends_on:
+      - database
+
+  frontend:
+    container_name: leapfrog-frontend
+    build:
+      context: ./frontend  # Path to frontend Dockerfile
+      dockerfile: Dockerfile
+    ports:
+      - "${FRONTEND_PORT}:3000"  # Map frontend port dynamically
+    environment:
+      - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}  # Frontend will call backend using this URL
+      - PORT=${FRONTEND_PORT}
+    depends_on:
+      - backend
