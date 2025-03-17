@@ -24,10 +24,9 @@ dotenv.config();
 const app = express();
 
 
-
 // CORS checks
 app.use(cors({
-  origin: "https://20.197.52.87:3000",
+  origin: process.env.FRONTEND_URL,
   credentials: true,
 }));
 
