@@ -34,7 +34,7 @@ services:
       context: ./frontend  # Path to frontend Dockerfile
       dockerfile: Dockerfile
     ports:
-      - "${FRONTEND_PORT}:3000"  # Map frontend port dynamically
+      - "${FRONTEND_PORT}:80"  # Map frontend port dynamically
     environment:
       - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}  # Frontend will call backend using this URL
       - PORT=${FRONTEND_PORT}
